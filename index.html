@@ -5,10 +5,8 @@
   <title>AI Price Signal Intelligence — Fabric AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
@@ -22,13 +20,7 @@
             mono: ['Fira Code', 'monospace'],
           },
           colors: {
-            brand: {
-              black: '#050505',
-              dark: '#0f1115',
-              border: '#1f2937',
-              accent: '#3b82f6',
-              purple: '#8b5cf6',
-            }
+            brand: { black: '#050505', dark: '#0f1115' }
           }
         }
       }
@@ -36,21 +28,16 @@
   </script>
 
   <style>
-    body {
-      background-color: #050505;
-      color: #e5e7eb;
-      -webkit-font-smoothing: antialiased;
-    }
+    body { background-color: #050505; color: #e5e7eb; -webkit-font-smoothing: antialiased; }
 
     .glass {
-      background: rgba(15, 17, 21, 0.85);
+      background: rgba(15,17,21,0.85);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.08);
     }
-
     .glass-hover:hover {
-      border-color: rgba(255, 255, 255, 0.14);
-      background: rgba(15, 17, 21, 0.95);
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(15,17,21,0.95);
     }
 
     .btn-gradient {
@@ -60,19 +47,14 @@
     .btn-gradient:hover:not(:disabled) {
       opacity: 0.92;
       transform: translateY(-1px);
-      box-shadow: 0 12px 24px -6px rgba(59, 130, 246, 0.45);
+      box-shadow: 0 12px 24px -6px rgba(59,130,246,0.45);
     }
-    .btn-gradient:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .btn-gradient:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
     .custom-scrollbar::-webkit-scrollbar { width: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
-    /* ── Shimmer loading ── */
     @keyframes shimmer {
       0%   { background-position: -200% 0; }
       100% { background-position:  200% 0; }
@@ -83,69 +65,58 @@
       animation: shimmer 1.6s infinite linear;
     }
 
-    /* ── OpenAI-style dots loader ── */
     @keyframes bounce-dot {
       0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
       40%            { transform: scale(1);   opacity: 1;   }
     }
     .dot-loader span {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: white;
+      display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; background: white;
       animation: bounce-dot 1.2s infinite ease-in-out;
     }
     .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
     .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
 
-    /* ── Checkbox cards ── */
+    /* Checkbox cards — shared by countries, platforms, and models */
     .checkbox-card input:checked + div {
       border-color: #3b82f6;
-      background-color: rgba(59, 130, 246, 0.12);
+      background-color: rgba(59,130,246,0.12);
       color: #93c5fd;
     }
-    .checkbox-card div {
-      transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+    .checkbox-card div { transition: border-color 0.15s, background-color 0.15s, color 0.15s; }
+
+    /* Model checkbox cards get a distinct accent */
+    .model-card input:checked + div {
+      border-color: #8b5cf6;
+      background-color: rgba(139,92,246,0.12);
+      color: #c4b5fd;
     }
 
-    /* ── JSON syntax ── */
+    /* JSON syntax */
     .json-key    { color: #93c5fd; }
     .json-string { color: #c4b5fd; }
     .json-number { color: #6ee7b7; }
     .json-bool   { color: #fbbf24; }
     .json-null   { color: #f87171; }
 
-    /* ── Health indicator pulse ── */
-    @keyframes health-pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
-      50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0);  }
-    }
-    .health-dot-ok  { background:#4ade80; animation: health-pulse 2s infinite; }
-    .health-dot-err { background:#f87171; }
-    .health-dot-chk { background:#fbbf24; animation: shimmer 1s infinite linear; }
-
-    /* ── Radar chart ── */
-    .radar-svg text { font-family: 'Fira Code', monospace; font-size: 9px; fill: #6b7280; }
-
-    /* ── Live monitor badge ── */
-    @keyframes live-blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .live-badge { animation: live-blink 1.2s infinite; }
-
-    /* ── Glow accent line ── */
+    /* Accent divider */
     .accent-glow {
       background: linear-gradient(90deg, transparent, #3b82f6 40%, #8b5cf6 60%, transparent);
-      height: 1px;
-      opacity: 0.4;
+      height: 1px; opacity: 0.4;
     }
 
-    /* ── Result card enter animation ── */
     @keyframes card-in {
       from { opacity:0; transform: translateY(8px); }
-      to   { opacity:1; transform: translateY(0);   }
+      to   { opacity:1; transform: translateY(0); }
     }
     .result-card { animation: card-in 0.25s ease-out; }
 
-    /* ── Tooltip ── */
+    /* Model badge chips on result cards */
+    .model-badge-perplexity { background: rgba(16,185,129,0.12); color: #6ee7b7; border-color: rgba(16,185,129,0.25); }
+    .model-badge-claude     { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.25); }
+    .model-badge-gemini     { background: rgba(139,92,246,0.12); color: #c4b5fd; border-color: rgba(139,92,246,0.25); }
+
+    /* Tooltip */
     .tooltip { position: relative; }
     .tooltip:hover::after {
       content: attr(data-tip);
@@ -155,26 +126,57 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
 
-    /* date input styling on dark bg */
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
     input[type="date"] { color-scheme: dark; }
 
-    /* ── Share toast ── */
+    /* Toast / modal */
     #share-toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background: #1f2937; border: 1px solid rgba(255,255,255,0.1);
-      padding: 10px 16px; border-radius: 12px; font-size: 13px;
+      padding: 12px 16px; border-radius: 12px; font-size: 12px; max-width: 380px;
       transition: opacity 0.4s; pointer-events: none;
     }
     #share-toast.hidden { opacity: 0; }
+
+    /* Payload modal overlay */
+    #payload-modal {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    #payload-modal.hidden { display: none; }
+    #payload-modal-box {
+      background: #0f1115; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 24px; max-width: 640px; width: 100%;
+      max-height: 80vh; display: flex; flex-direction: column; gap: 16px;
+    }
+
+    /* Group headers in results */
+    .result-group-header {
+      padding: 6px 0 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body class="min-h-screen selection:bg-blue-500/30">
 
-<!-- ── Share toast ── -->
-<div id="share-toast" class="hidden">🔗 Link copied to clipboard</div>
+<!-- Toast notification -->
+<div id="share-toast" class="hidden"></div>
 
-<!-- ── Header ── -->
+<!-- Payload modal (clipboard fallback) -->
+<div id="payload-modal" class="hidden">
+  <div id="payload-modal-box">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-bold text-white">POST Payloads</p>
+      <button id="payload-modal-close" class="text-gray-500 hover:text-white transition-colors text-xs">✕ Close</button>
+    </div>
+    <pre id="payload-modal-content" class="text-[11px] font-mono text-gray-300 bg-black/40 p-4 rounded-xl overflow-auto custom-scrollbar flex-1"></pre>
+    <button id="payload-modal-copy" class="btn-gradient py-2 px-4 rounded-xl text-sm font-semibold text-white w-full">Copy to clipboard</button>
+  </div>
+</div>
+
+<!-- Header -->
 <header class="pt-12 pb-8 px-4 relative overflow-hidden">
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-72 bg-blue-600/8 blur-[140px] pointer-events-none"></div>
   <div class="max-w-5xl mx-auto text-center relative z-10">
@@ -182,134 +184,96 @@
     <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
       AI Price Signal <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Intelligence</span>
     </h1>
-    <p class="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-      High-fidelity pricing data extraction and competitive intelligence powered by advanced language models.
+    <p class="text-gray-500 text-base max-w-2xl mx-auto font-light">
+      Parallel extraction across models · streaming pricing data · side-by-side comparison
     </p>
-
-    <!-- ── Health + Monitor bar ── -->
-    <div class="mt-6 flex items-center justify-center gap-5 flex-wrap">
-      <!-- Endpoint health -->
-      <div class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs">
-        <span id="health-dot" class="w-2 h-2 rounded-full health-dot-chk"></span>
-        <span id="health-label" class="text-gray-400">Checking endpoint…</span>
-      </div>
-      <!-- Live monitor toggle -->
-      <button id="monitor-toggle" onclick="toggleMonitor()" class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs text-gray-400 hover:border-white/10 transition-colors">
-        <span id="monitor-dot" class="w-2 h-2 rounded-full bg-gray-600"></span>
-        <span id="monitor-label">Live Monitor: OFF</span>
-      </button>
-      <!-- Auto-refresh toggle -->
-      <button id="autorefresh-toggle" onclick="toggleAutoRefresh()" class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs text-gray-400 hover:border-white/10 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-        <span id="autorefresh-label">Auto-refresh: OFF</span>
-      </button>
-      <!-- Share button -->
-      <button onclick="shareURL()" class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs text-gray-400 hover:border-white/10 transition-colors tooltip" data-tip="Copy shareable link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-        Share Query
-      </button>
-    </div>
   </div>
 </header>
 
 <div class="accent-glow max-w-6xl mx-auto my-2 px-4"></div>
 
-<main class="max-w-6xl mx-auto px-4 pb-24">
+<main class="max-w-6xl mx-auto px-4 pb-24 mt-8">
 
   <!-- ── Query Panel ── -->
-  <div class="glass rounded-3xl p-6 md:p-8 mb-10 shadow-2xl mt-8">
+  <div class="glass rounded-3xl p-6 md:p-8 mb-10 shadow-2xl">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-      <!-- Left Column: Params -->
-      <div class="lg:col-span-8 space-y-8">
+      <!-- Left column -->
+      <div class="lg:col-span-8 space-y-7">
+
+        <!-- Row 1: Models + Date -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Model -->
+          <!-- Models (multi-select checkboxes) -->
           <div class="space-y-3">
             <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2">
-              Execution Model <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+              Execution Models <span class="w-1 h-1 rounded-full bg-purple-500"></span>
             </label>
-            <select id="model" onchange="updateSummary()" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
-              <option value="perplexity">Perplexity (Real-time Search)</option>
-              <option value="claude">Claude 3.5 Sonnet + Tavily</option>
-              <option value="gemini">Gemini 2.5 Flash</option>
-            </select>
+            <div class="grid grid-cols-1 gap-2" id="models-list">
+              <!-- JS populated -->
+            </div>
           </div>
 
           <!-- Date -->
           <div class="space-y-3">
             <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2">
-              Snapshot Date <span class="w-1 h-1 rounded-full bg-purple-500"></span>
+              Snapshot Date <span class="w-1 h-1 rounded-full bg-blue-500"></span>
             </label>
-            <input type="date" id="date" onchange="updateSummary()" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors">
+            <input type="date" id="date" onchange="updateSummary()"
+              class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors">
           </div>
         </div>
 
-        <!-- Multi-selectors -->
+        <!-- Row 2: Countries + Platforms -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <!-- Countries -->
           <div class="space-y-3">
             <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Target Countries</label>
-            <div class="grid grid-cols-2 gap-2" id="countries-list">
-              <!-- JS populated -->
-            </div>
-            <input
-              type="text"
-              id="custom-country"
-              placeholder="Add more, e.g. Uruguay, Mexico"
+            <div class="grid grid-cols-2 gap-2" id="countries-list"></div>
+            <input type="text" id="custom-country"
+              placeholder="More, e.g. Uruguay, Mexico"
               oninput="updateSummary()"
-              class="w-full mt-1 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-600"
-            />
+              class="w-full mt-1 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-600" />
           </div>
           <!-- Platforms -->
           <div class="space-y-3">
             <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Competitive Platforms</label>
-            <div class="grid grid-cols-2 gap-2" id="platforms-list">
-              <!-- JS populated -->
-            </div>
-            <input
-              type="text"
-              id="custom-platform"
-              placeholder="Add more, e.g. Paramount+, Crunchyroll"
+            <div class="grid grid-cols-2 gap-2" id="platforms-list"></div>
+            <input type="text" id="custom-platform"
+              placeholder="More, e.g. Paramount+, Crunchyroll"
               oninput="updateSummary()"
-              class="w-full mt-1 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-600"
-            />
+              class="w-full mt-1 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-600" />
           </div>
         </div>
       </div>
 
-      <!-- Right Column: CTA -->
+      <!-- Right column: summary + actions -->
       <div class="lg:col-span-4 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/5 pt-8 lg:pt-0 lg:pl-8 gap-4">
-        <div>
-          <div class="bg-blue-500/5 rounded-2xl p-5 mb-4 border border-blue-500/10">
-            <h4 class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              Request Summary
-            </h4>
-            <p id="summary-text" class="text-xs text-gray-400 leading-relaxed">
-              Select at least one country and one platform.
-            </p>
-          </div>
-          <!-- Competitive radar mode -->
-          <div class="bg-purple-500/5 rounded-2xl p-4 border border-purple-500/10">
-            <label class="flex items-center justify-between cursor-pointer">
-              <span class="text-xs text-purple-300 font-semibold">Radar Mode</span>
-              <span class="text-[10px] text-gray-500">Show visual radar</span>
-            </label>
-            <label class="flex items-center gap-3 mt-2 cursor-pointer">
-              <div class="relative">
-                <input type="checkbox" id="radar-toggle" class="sr-only" onchange="toggleRadar()">
-                <div id="radar-track" class="w-9 h-5 rounded-full bg-white/10 transition-colors"></div>
-                <div id="radar-thumb" class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-400 transition-transform"></div>
-              </div>
-              <span class="text-xs text-gray-400" id="radar-label">Off</span>
-            </label>
-          </div>
+
+        <!-- Summary box -->
+        <div class="bg-blue-500/5 rounded-2xl p-5 border border-blue-500/10">
+          <h4 class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            Request Summary
+          </h4>
+          <p id="summary-text" class="text-xs text-gray-400 leading-relaxed">Select models, countries, and platforms.</p>
         </div>
 
-        <button id="run-btn" class="btn-gradient w-full py-4 rounded-2xl font-bold text-white shadow-lg flex items-center justify-center gap-3" disabled>
-          <span id="run-btn-text">Run Intelligence Scan</span>
-          <svg id="run-btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-        </button>
+        <!-- Action buttons -->
+        <div class="space-y-3">
+          <!-- Share payloads button -->
+          <button id="share-btn" class="w-full py-2.5 rounded-xl text-xs font-semibold border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] text-gray-300 transition-colors flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            Copy POST Payload(s)
+          </button>
+
+          <!-- Run button -->
+          <button id="run-btn"
+            class="btn-gradient w-full py-4 rounded-2xl font-bold text-white shadow-lg flex items-center justify-center gap-3"
+            disabled>
+            <span id="run-btn-text">Run Intelligence Scan</span>
+            <svg id="run-btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -320,103 +284,97 @@
       <h3 class="text-xl font-bold flex items-center gap-3">
         Intelligence Outputs
         <span id="job-counter" class="bg-blue-500/10 text-blue-400 text-xs py-1 px-3 rounded-full border border-blue-500/20">0 / 0</span>
-        <span id="live-badge" class="hidden live-badge bg-red-500/10 text-red-400 text-[10px] font-bold py-1 px-2 rounded-full border border-red-500/20">● LIVE</span>
       </h3>
       <div class="flex items-center gap-3">
-        <button id="export-csv-btn" onclick="exportCSV()" class="hidden text-xs bg-green-500/10 hover:bg-green-500/15 text-green-400 border border-green-500/20 px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <button id="export-csv-btn" class="hidden text-xs bg-green-500/10 hover:bg-green-500/15 text-green-400 border border-green-500/20 px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Export CSV
         </button>
-        <button onclick="clearResults()" class="text-xs text-gray-500 hover:text-white transition-colors">Clear all</button>
+        <button id="clear-btn" class="text-xs text-gray-500 hover:text-white transition-colors">Clear all</button>
       </div>
     </div>
 
     <!-- Latency chart -->
     <div id="chart-wrapper" class="hidden glass rounded-2xl p-5">
       <p class="text-xs font-bold text-gray-500 uppercase mb-3">Response Latency (seconds)</p>
-      <div id="latency-chart" class="flex items-end gap-2 h-20 overflow-x-auto custom-scrollbar"></div>
+      <div id="latency-chart" class="flex items-end gap-2 h-20 overflow-x-auto custom-scrollbar pb-1"></div>
     </div>
 
-    <!-- Radar chart -->
-    <div id="radar-wrapper" class="hidden glass rounded-2xl p-5">
-      <p class="text-xs font-bold text-gray-500 uppercase mb-3">Competitive Radar</p>
-      <div id="radar-container" class="flex flex-wrap gap-6 justify-center"></div>
-    </div>
-
-    <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Results appended here -->
+    <!-- Results grouped by country+platform -->
+    <div id="results-container" class="space-y-6">
+      <!-- Groups appended here -->
     </div>
   </div>
 
-  <!-- ── API Documentation ── -->
+  <!-- ── API Reference ── -->
   <section class="mt-20 pt-16 border-t border-white/5">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-2xl font-bold mb-2">API Usage & Integration</h2>
-      <p class="text-gray-400 mb-8 font-light">Direct programmatic access to the pricing intelligence engine.</p>
+    <div class="max-w-4xl mx-auto space-y-6">
+      <div>
+        <h2 class="text-lg font-bold text-white mb-1">API Reference</h2>
+        <p class="text-xs text-gray-500">Lambda Function URL — direct POST, no auth.</p>
+      </div>
 
-      <div class="space-y-6">
-        <!-- Endpoint Info -->
-        <div class="glass rounded-2xl p-6">
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-            <div>
-              <span class="bg-green-500/10 text-green-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded mb-2 inline-block border border-green-500/20">POST</span>
-              <code id="endpoint-display" class="block text-sm text-blue-300 break-all font-mono">https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/</code>
-            </div>
-            <button onclick="copyText('https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/')" class="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors tooltip" data-tip="Copy endpoint">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-            </button>
+      <!-- Endpoint row -->
+      <div class="glass rounded-2xl p-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <div>
+            <span class="bg-green-500/10 text-green-400 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-green-500/20 mr-2">POST</span>
+            <code id="endpoint-display" class="text-sm text-blue-300 break-all font-mono">https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/</code>
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <p class="text-[11px] font-bold text-gray-500 uppercase">Request Schema</p>
-              <ul class="text-xs space-y-2 text-gray-400">
-                <li><code class="text-blue-400">modelo</code> <span class="opacity-50">string</span> — "perplexity" | "claude" | "gemini"</li>
-                <li><code class="text-blue-400">pais</code> <span class="opacity-50">string</span> — Target country</li>
-                <li><code class="text-blue-400">plataforma</code> <span class="opacity-50">string</span> — Streaming platform</li>
-                <li><code class="text-blue-400">fecha</code> <span class="opacity-50">string</span> — Format: DD/MM/YYYY</li>
-              </ul>
-            </div>
-            <div class="space-y-2">
-              <p class="text-[11px] font-bold text-gray-500 uppercase">Response Shape</p>
-              <ul class="text-xs space-y-2 text-gray-400">
-                <li><code class="text-green-400">modelo</code> — model identifier</li>
-                <li><code class="text-green-400">pais / plataforma / moneda</code></li>
-                <li><code class="text-green-400">noticias[]</code> — news items with plans</li>
-                <li><code class="text-green-400">tiempo</code> — execution time (s)</li>
-              </ul>
-            </div>
+          <button id="copy-endpoint-btn" class="shrink-0 bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors tooltip" data-tip="Copy URL">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          </button>
+        </div>
+        <!-- Schema -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+          <div>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Request body (JSON)</p>
+            <ul class="space-y-1.5 text-gray-400">
+              <li><code class="text-blue-400">modelo</code> <span class="text-gray-600">string</span> &nbsp;— <code class="text-gray-400">"perplexity" | "claude" | "gemini"</code></li>
+              <li><code class="text-blue-400">pais</code> <span class="text-gray-600">string</span> &nbsp;— target country name</li>
+              <li><code class="text-blue-400">plataforma</code> <span class="text-gray-600">string</span> &nbsp;— platform name</li>
+              <li><code class="text-blue-400">fecha</code> <span class="text-gray-600">string</span> &nbsp;— <code class="text-gray-400">DD/MM/YYYY</code></li>
+            </ul>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Response fields</p>
+            <ul class="space-y-1.5 text-gray-400">
+              <li><code class="text-green-400">modelo</code> · <code class="text-green-400">pais</code> · <code class="text-green-400">plataforma</code> · <code class="text-green-400">moneda</code></li>
+              <li><code class="text-green-400">noticias[]</code> — news items with nested plans</li>
+              <li><code class="text-green-400">tiempo</code> — server-side execution time (s)</li>
+              <li><span class="text-gray-600">May return Lambda envelope:</span> <code class="text-gray-500">&#123;statusCode, body&#125;</code></li>
+            </ul>
           </div>
         </div>
+      </div>
 
-        <!-- Code Samples -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="glass rounded-2xl p-5 overflow-hidden">
-            <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">cURL</p>
-            <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">curl -X POST \
-  https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "modelo":"perplexity",
-    "pais":"Argentina",
-    "plataforma":"Netflix",
-    "fecha":"24/02/2026"
-  }'</pre>
+      <!-- Dynamic examples -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="glass rounded-2xl p-5 overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-[10px] font-bold text-gray-500 uppercase">cURL example</p>
+            <span id="curl-note" class="text-[10px] text-gray-600"></span>
           </div>
-          <div class="glass rounded-2xl p-5 overflow-hidden">
-            <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">Python (requests)</p>
-            <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">import requests
-
-url = "https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/"
-res = requests.post(url, json={
-    "modelo": "perplexity",
-    "pais":   "Brazil",
-    "plataforma": "Disney+",
-    "fecha":  "24/02/2026"
-})
-print(res.json())</pre>
-          </div>
+          <pre id="curl-example" class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar"></pre>
         </div>
+        <div class="glass rounded-2xl p-5 overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-[10px] font-bold text-gray-500 uppercase">Python example</p>
+            <span id="python-note" class="text-[10px] text-gray-600"></span>
+          </div>
+          <pre id="python-example" class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar"></pre>
+        </div>
+      </div>
+
+      <!-- Backend recommendations note -->
+      <div class="glass rounded-2xl p-5 border-l-2 border-yellow-500/40">
+        <p class="text-[11px] font-bold text-yellow-400/80 uppercase mb-2">Backend changes recommended</p>
+        <ul class="text-xs text-gray-500 space-y-1 list-disc list-inside">
+          <li>Configure Lambda Function URL CORS: <code class="text-gray-400">AllowOrigins=*</code>, <code class="text-gray-400">AllowMethods=POST,OPTIONS</code>, <code class="text-gray-400">AllowHeaders=content-type</code></li>
+          <li>Gemini handler should enforce a hard timeout (e.g. 60s) server-side to prevent Lambda execution runaway</li>
+          <li>All handlers should return consistent JSON — avoid plain-text error responses</li>
+          <li>Consider returning HTTP 4xx/5xx status codes for errors instead of 200 with an error field</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -429,397 +387,620 @@ print(res.json())</pre>
   </div>
 </footer>
 
-<!-- ──────────────────────────── JavaScript ──────────────────────────── -->
+<!-- ═══════════════════════════ JavaScript ═══════════════════════════ -->
 <script>
 'use strict';
 
-// ── Constants ──────────────────────────────────────────────────────────────
-const API_URL   = 'https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/';
-const LS_KEY    = 'fabricai_last_query';
+/* ─────────────────── Constants ─────────────────── */
+var API_URL  = 'https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/';
+var LS_KEY   = 'fabricai_last_query_v2';
+var TASK_TIMEOUT_MS = 90000; // 90 s per request
 
-const COUNTRIES = ['Argentina', 'Brazil', 'Chile', 'Spain', 'United States'];
-const PLATFORMS = ['Netflix', 'Disney+', 'Amazon Prime Video', 'Max', 'Apple TV+'];
+var MODELS = [
+  { value: 'perplexity', label: 'Perplexity',          sub: 'Real-time Search' },
+  { value: 'claude',     label: 'Claude 3.5 Sonnet',   sub: '+ Tavily'         },
+  { value: 'gemini',     label: 'Gemini 2.5 Flash',    sub: 'Google Search'    }
+];
+var COUNTRIES = ['Argentina', 'Brazil', 'Chile', 'Spain', 'United States'];
+var PLATFORMS = ['Netflix', 'Disney+', 'Amazon Prime Video', 'Max', 'Apple TV+'];
 
-// ── DOM Refs ───────────────────────────────────────────────────────────────
-const countriesList   = document.getElementById('countries-list');
-const platformsList   = document.getElementById('platforms-list');
-const runBtn          = document.getElementById('run-btn');
-const runBtnText      = document.getElementById('run-btn-text');
-const runBtnIcon      = document.getElementById('run-btn-icon');
-const resultsContainer = document.getElementById('results-container');
-const resultsWrapper  = document.getElementById('results-wrapper');
-const dateInput       = document.getElementById('date');
-const modelSelect     = document.getElementById('model');
-const summaryText     = document.getElementById('summary-text');
-const jobCounter      = document.getElementById('job-counter');
-const chartWrapper    = document.getElementById('chart-wrapper');
-const latencyChart    = document.getElementById('latency-chart');
-const radarWrapper    = document.getElementById('radar-wrapper');
-const radarContainer  = document.getElementById('radar-container');
-const exportBtn       = document.getElementById('export-csv-btn');
-const liveBadge       = document.getElementById('live-badge');
-const shareToast      = document.getElementById('share-toast');
+/* ─────────────────── DOM refs ─────────────────── */
+var runBtn          = document.getElementById('run-btn');
+var runBtnText      = document.getElementById('run-btn-text');
+var runBtnIcon      = document.getElementById('run-btn-icon');
+var summaryText     = document.getElementById('summary-text');
+var jobCounter      = document.getElementById('job-counter');
+var resultsWrapper  = document.getElementById('results-wrapper');
+var resultsContainer = document.getElementById('results-container');
+var chartWrapper    = document.getElementById('chart-wrapper');
+var latencyChart    = document.getElementById('latency-chart');
+var exportBtn       = document.getElementById('export-csv-btn');
+var shareBtn        = document.getElementById('share-btn');
+var clearBtn        = document.getElementById('clear-btn');
+var dateInput       = document.getElementById('date');
+var shareToast      = document.getElementById('share-toast');
+var payloadModal    = document.getElementById('payload-modal');
+var payloadModalContent = document.getElementById('payload-modal-content');
+var payloadModalCopy    = document.getElementById('payload-modal-copy');
+var payloadModalClose   = document.getElementById('payload-modal-close');
 
-// ── State ──────────────────────────────────────────────────────────────────
-let completedJobs = 0;
-let totalJobs     = 0;
-let resultStore   = [];      // [{task, data, time, isError}]
-let latencyData   = [];      // [{label, time}]
-let monitorActive = false;
-let monitorTimer  = null;
-let autoRefresh   = false;
-let autoRefreshTimer = null;
-let radarMode     = false;
+/* ─────────────────── State ─────────────────── */
+var completedJobs = 0;
+var totalJobs     = 0;
+var resultStore   = []; // { task, parsed, rawText, status, time }
+var latencyData   = []; // { label, time, model }
 
-// ── Initialisation ─────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', function () {
+/* ─────────────────── Boot ─────────────────── */
+document.addEventListener('DOMContentLoaded', function () {
   setDefaultDate();
-  populateCheckboxes();
-  restoreFromURL();
+  populateModelCheckboxes();
+  populateCheckboxes(document.getElementById('countries-list'), COUNTRIES, 'country');
+  populateCheckboxes(document.getElementById('platforms-list'), PLATFORMS,  'platform');
   restoreFromLocalStorage();
   updateSummary();
-  checkEndpointHealth();
+  updateApiExamples();
   runBtn.addEventListener('click', runIntelligenceScan);
+  shareBtn.addEventListener('click', sharePayloads);
+  exportBtn.addEventListener('click', exportCSV);
+  clearBtn.addEventListener('click', clearResults);
+  payloadModalClose.addEventListener('click', function () { payloadModal.classList.add('hidden'); });
+  payloadModalCopy.addEventListener('click', function () {
+    var txt = payloadModalContent.textContent;
+    navigator.clipboard.writeText(txt).then(function () {
+      showToast('Copied to clipboard');
+    }).catch(function () {});
+  });
+  document.getElementById('copy-endpoint-btn').addEventListener('click', function () {
+    navigator.clipboard.writeText(API_URL).then(function () { showToast('Endpoint URL copied'); }).catch(function(){});
+  });
 });
 
-function setDefaultDate() {
-  const today = new Date();
-  dateInput.value = today.toISOString().split('T')[0];
-}
-
-function populateCheckboxes() {
-  COUNTRIES.forEach(function (c) {
-    countriesList.insertAdjacentHTML('beforeend', createCheckbox(c, 'country'));
+/* ─────────────────── Populate checkboxes ─────────────────── */
+function populateModelCheckboxes() {
+  var container = document.getElementById('models-list');
+  MODELS.forEach(function (m) {
+    var label = document.createElement('label');
+    label.className = 'model-card checkbox-card cursor-pointer group';
+    label.innerHTML =
+      '<input type="checkbox" name="model" value="' + m.value + '" class="hidden" onchange="updateSummary()">' +
+      '<div class="border border-white/5 bg-white/[0.02] rounded-xl px-3 py-2 flex items-center justify-between group-hover:border-white/15">' +
+        '<span class="text-xs font-medium">' + esc(m.label) + '</span>' +
+        '<span class="text-[10px] text-gray-600">' + esc(m.sub) + '</span>' +
+      '</div>';
+    container.appendChild(label);
   });
-  PLATFORMS.forEach(function (p) {
-    platformsList.insertAdjacentHTML('beforeend', createCheckbox(p, 'platform'));
+}
+
+function populateCheckboxes(container, items, name) {
+  items.forEach(function (item) {
+    container.insertAdjacentHTML('beforeend',
+      '<label class="checkbox-card cursor-pointer group">' +
+        '<input type="checkbox" name="' + name + '" value="' + esc(item) + '" class="hidden" onchange="updateSummary()">' +
+        '<div class="border border-white/5 bg-white/[0.02] rounded-xl px-3 py-2 text-xs group-hover:border-white/15">' + esc(item) + '</div>' +
+      '</label>'
+    );
   });
 }
 
-function createCheckbox(label, type) {
-  return '<label class="checkbox-card cursor-pointer group">' +
-    '<input type="checkbox" name="' + type + '" value="' + label +
-    '" class="hidden" onchange="updateSummary()">' +
-    '<div class="border border-white/5 bg-white/[0.02] rounded-xl px-3 py-2 text-xs group-hover:border-white/15">' +
-    label +
-    '</div>' +
-    '</label>';
+/* ─────────────────── Selection helpers ─────────────────── */
+function getSelectedModels() {
+  return Array.from(document.querySelectorAll('input[name="model"]:checked')).map(function (i) { return i.value; });
+}
+function getSelectedCountries() {
+  var cb = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(function (i) { return i.value; });
+  return dedup(cb.concat(parseCSV(document.getElementById('custom-country').value)));
+}
+function getSelectedPlatforms() {
+  var cb = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function (i) { return i.value; });
+  return dedup(cb.concat(parseCSV(document.getElementById('custom-platform').value)));
 }
 
-// ── Summary ────────────────────────────────────────────────────────────────
+function getFormattedDate() {
+  var v = dateInput.value;
+  if (!v) return '';
+  return v.split('-').reverse().join('/'); // YYYY-MM-DD → DD/MM/YYYY
+}
+
+/* ─────────────────── Build task list ─────────────────── */
+function buildTasks() {
+  var models    = getSelectedModels();
+  var countries = getSelectedCountries();
+  var platforms = getSelectedPlatforms();
+  var fecha     = getFormattedDate();
+  var tasks = [];
+  countries.forEach(function (country) {
+    platforms.forEach(function (platform) {
+      models.forEach(function (model) {
+        tasks.push({ model: model, country: country, platform: platform, date: fecha });
+      });
+    });
+  });
+  return tasks;
+}
+
+/* Build POST payload from task (exact shape sent to Lambda) */
+function taskToPayload(task) {
+  return { modelo: task.model, pais: task.country, plataforma: task.platform, fecha: task.date };
+}
+
+/* ─────────────────── Summary ─────────────────── */
 function updateSummary() {
-  var checkedCountries  = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(function(i){ return i.value; });
-  var checkedPlatforms  = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function(i){ return i.value; });
-  var manualCountries   = parseCSV(document.getElementById('custom-country').value);
-  var manualPlatforms   = parseCSV(document.getElementById('custom-platform').value);
-
-  var allCountries  = dedup(checkedCountries.concat(manualCountries));
-  var allPlatforms  = dedup(checkedPlatforms.concat(manualPlatforms));
-  var total         = allCountries.length * allPlatforms.length;
+  var models    = getSelectedModels();
+  var countries = getSelectedCountries();
+  var platforms = getSelectedPlatforms();
+  var M = models.length, C = countries.length, P = platforms.length;
+  var total = M * C * P;
 
   if (total > 0) {
+    var modelNames = models.map(function (v) {
+      var m = MODELS.find(function (x) { return x.value === v; });
+      return m ? m.label : v;
+    });
     summaryText.textContent =
-      'This will execute ' + total + ' request(s) using ' +
-      modelSelect.options[modelSelect.selectedIndex].text +
-      ' across ' + allCountries.length + ' countr' + (allCountries.length === 1 ? 'y' : 'ies') +
-      ' × ' + allPlatforms.length + ' platform' + (allPlatforms.length === 1 ? '' : 's') + '.';
+      total + ' request' + (total === 1 ? '' : 's') + ' — ' +
+      M + ' model' + (M === 1 ? '' : 's') + ' × ' +
+      C + ' countr' + (C === 1 ? 'y' : 'ies') + ' × ' +
+      P + ' platform' + (P === 1 ? '' : 's') +
+      ' (' + modelNames.join(', ') + ')';
   } else {
-    summaryText.textContent = 'Select at least one country and one platform to proceed.';
+    var missing = [];
+    if (M === 0) missing.push('model');
+    if (C === 0) missing.push('country');
+    if (P === 0) missing.push('platform');
+    summaryText.textContent = 'Select at least one ' + missing.join(', ') + '.';
   }
 
   runBtn.disabled = total === 0;
+  shareBtn.disabled = total === 0;
+  updateApiExamples();
 }
 
-// ── Core scan ──────────────────────────────────────────────────────────────
+/* ─────────────────── API examples (dynamic) ─────────────────── */
+function updateApiExamples() {
+  var tasks = buildTasks();
+  var example = tasks.length > 0
+    ? taskToPayload(tasks[0])
+    : { modelo: 'perplexity', pais: 'Argentina', plataforma: 'Netflix', fecha: '24/02/2026' };
+
+  var note = tasks.length > 1
+    ? '(showing 1 of ' + tasks.length + ' payloads)'
+    : '';
+  document.getElementById('curl-note').textContent   = note;
+  document.getElementById('python-note').textContent = note;
+
+  var payloadStr = JSON.stringify(example, null, 2);
+
+  document.getElementById('curl-example').textContent =
+    'curl -X POST \\\n' +
+    '  ' + API_URL + ' \\\n' +
+    '  -H "Content-Type: application/json" \\\n' +
+    '  -d \'' + JSON.stringify(example) + '\'';
+
+  document.getElementById('python-example').textContent =
+    'import requests\n\n' +
+    'res = requests.post(\n' +
+    '    "' + API_URL + '",\n' +
+    '    json=' + payloadStr.replace(/\n/g, '\n    ') + '\n' +
+    ')\n' +
+    'print(res.json())';
+}
+
+/* ─────────────────── Share payloads ─────────────────── */
+function sharePayloads() {
+  var tasks = buildTasks();
+  if (tasks.length === 0) { showToast('No tasks selected'); return; }
+
+  var payloads = tasks.map(taskToPayload);
+  var text = JSON.stringify(payloads.length === 1 ? payloads[0] : payloads, null, 2);
+
+  navigator.clipboard.writeText(text).then(function () {
+    showToast('Copied ' + payloads.length + ' payload' + (payloads.length === 1 ? '' : 's') + ' to clipboard');
+  }).catch(function () {
+    // Clipboard failed — show modal
+    payloadModalContent.textContent = text;
+    payloadModal.classList.remove('hidden');
+  });
+}
+
+/* ─────────────────── Run scan ─────────────────── */
 async function runIntelligenceScan() {
-  var selectedModel = modelSelect.value;
+  var tasks = buildTasks();
 
-  var checkedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(function(i){ return i.value; });
-  var checkedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function(i){ return i.value; });
-  var manualCountries  = parseCSV(document.getElementById('custom-country').value);
-  var manualPlatforms  = parseCSV(document.getElementById('custom-platform').value);
-
-  var allCountries = dedup(checkedCountries.concat(manualCountries));
-  var allPlatforms = dedup(checkedPlatforms.concat(manualPlatforms));
-
-  if (allCountries.length === 0 || allPlatforms.length === 0) {
-    summaryText.textContent = '⚠ Select at least one country and one platform.';
+  if (tasks.length === 0) {
+    summaryText.textContent = '⚠ Select at least one model, country, and platform.';
     return;
   }
-
-  var rawDate = dateInput.value;
-  if (!rawDate) {
+  if (!dateInput.value) {
     summaryText.textContent = '⚠ Please select a snapshot date.';
     return;
   }
-  var formattedDate = rawDate.split('-').reverse().join('/');  // YYYY-MM-DD → DD/MM/YYYY
 
-  // ── Save to localStorage ──
-  saveToLocalStorage({ model: selectedModel, countries: allCountries, platforms: allPlatforms, date: rawDate });
+  // Save state
+  saveToLocalStorage({
+    models:    getSelectedModels(),
+    countries: getSelectedCountries(),
+    platforms: getSelectedPlatforms(),
+    date:      dateInput.value
+  });
 
-  // ── Reset state ──
+  // Reset UI
   resultStore  = [];
   latencyData  = [];
   completedJobs = 0;
   resultsContainer.innerHTML = '';
   latencyChart.innerHTML     = '';
-  radarContainer.innerHTML   = '';
 
   resultsWrapper.classList.remove('hidden');
-  chartWrapper.classList.remove('hidden');
-  exportBtn.classList.remove('hidden');
-  if (radarMode) radarWrapper.classList.remove('hidden');
+  chartWrapper.classList.add('hidden');
+  exportBtn.classList.add('hidden');
 
   setRunning(true);
-
-  // ── Build task list ──
-  var tasks = [];
-  allCountries.forEach(function (country) {
-    allPlatforms.forEach(function (platform) {
-      tasks.push({ model: selectedModel, country: country, platform: platform, date: formattedDate });
-    });
-  });
-
   totalJobs = tasks.length;
   jobCounter.textContent = '0 / ' + totalJobs;
 
-  // ── Execute all in parallel ──
+  // Pre-render group placeholders grouped by country+platform
+  var groups = buildGroups(tasks);
+  renderGroupPlaceholders(groups);
+
+  // Execute all in parallel
   await Promise.all(tasks.map(function (t) { return processTask(t); }));
 
   setRunning(false);
-
-  // ── Post-run ──
   renderLatencyChart();
-  if (radarMode) renderRadarCharts();
-  if (autoRefresh) scheduleAutoRefresh();
+
+  chartWrapper.classList.remove('hidden');
+  exportBtn.classList.remove('hidden');
 }
 
-async function processTask(task) {
-  var id = 'res-' + Math.random().toString(36).substr(2, 9);
-  renderPlaceholder(id, task);
+/* Build group map: { "country::platform" : [task, ...] } preserving order */
+function buildGroups(tasks) {
+  var order = [];
+  var map   = {};
+  tasks.forEach(function (t) {
+    var key = t.country + '::' + t.platform;
+    if (!map[key]) { map[key] = []; order.push(key); }
+    map[key].push(t);
+  });
+  return { order: order, map: map };
+}
 
+/* Render one group container per country+platform combination */
+function renderGroupPlaceholders(groups) {
+  groups.order.forEach(function (key) {
+    var tasks = groups.map[key];
+    var parts = key.split('::');
+    var country  = parts[0];
+    var platform = parts[1];
+    var groupId  = 'group-' + key.replace(/[^a-zA-Z0-9]/g, '_');
+
+    var groupHtml =
+      '<div id="' + groupId + '" class="glass rounded-2xl p-5 result-card">' +
+        '<div class="result-group-header mb-3 flex items-center gap-3">' +
+          '<span class="text-sm font-bold text-white">' + esc(platform) + '</span>' +
+          '<span class="text-gray-600">·</span>' +
+          '<span class="text-sm text-gray-400">' + esc(country) + '</span>' +
+        '</div>' +
+        '<div class="grid grid-cols-1 md:grid-cols-' + Math.min(tasks.length, 3) + ' gap-3" id="' + groupId + '-models">' +
+          tasks.map(function (t) {
+            var cardId = makeCardId(t);
+            return renderModelPlaceholderHTML(cardId, t);
+          }).join('') +
+        '</div>' +
+      '</div>';
+
+    resultsContainer.insertAdjacentHTML('beforeend', groupHtml);
+  });
+}
+
+function makeCardId(task) {
+  return 'card-' + task.model + '-' +
+    task.country.replace(/[^a-zA-Z0-9]/g, '_') + '-' +
+    task.platform.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function renderModelPlaceholderHTML(cardId, task) {
+  return '<div id="' + cardId + '" class="flex flex-col gap-2">' +
+    '<div class="flex items-center gap-2">' +
+      '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border model-badge-' + esc(task.model) + '">' + esc(task.model) + '</span>' +
+      '<div class="dot-loader flex gap-1"><span></span><span></span><span></span></div>' +
+    '</div>' +
+    '<div class="h-24 loading-shimmer rounded-xl"></div>' +
+  '</div>';
+}
+
+/* ─────────────────── Process single task ─────────────────── */
+async function processTask(task) {
+  var cardId    = makeCardId(task);
   var startTime = performance.now();
-  var data, isError, duration;
+  var status    = 'ok';
+  var parsed    = null;
+  var rawText   = '';
+
+  var controller = new AbortController();
+  var timer = setTimeout(function () { controller.abort(); }, TASK_TIMEOUT_MS);
 
   try {
     var response = await fetch(API_URL, {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        modelo:     task.model,
-        pais:       task.country,
-        plataforma: task.platform,
-        fecha:      task.date
-      })
+      body:    JSON.stringify(taskToPayload(task)),
+      signal:  controller.signal
     });
+    clearTimeout(timer);
 
-    // Handle non-2xx HTTP errors
+    // Always read as text first — avoids json() throwing on non-JSON
+    rawText = await response.text();
+
     if (!response.ok) {
-      throw new Error('HTTP ' + response.status + ' — ' + response.statusText);
-    }
-
-    var raw = await response.json();
-
-    // Handle Lambda envelope: {statusCode, body} or plain object
-    if (raw && typeof raw.body !== 'undefined') {
-      data = (typeof raw.body === 'string') ? JSON.parse(raw.body) : raw.body;
+      status = 'error';
+      parsed = { error: 'HTTP ' + response.status + ' — ' + response.statusText, detail: rawText.slice(0, 500) };
     } else {
-      data = raw;
+      parsed = safeParseResponse(rawText);
+      if (parsed && parsed.__parseError) {
+        status = 'ok'; // got something, just couldn't parse as JSON
+      }
     }
-
-    duration = ((performance.now() - startTime) / 1000).toFixed(2);
-    isError  = false;
 
   } catch (err) {
-    var msg = err.message || 'Unknown error';
-    if (msg === 'Failed to fetch' || msg.toLowerCase().includes('networkerror') || msg.toLowerCase().includes('load failed')) {
-      msg = 'CORS blocked or Lambda unreachable. Check Lambda Function URL CORS settings: AllowOrigins=*, AllowMethods=POST,OPTIONS, AllowHeaders=content-type.';
+    clearTimeout(timer);
+    status = 'error';
+    if (err.name === 'AbortError') {
+      status = 'timeout';
+      parsed = { error: 'Request timed out after ' + (TASK_TIMEOUT_MS / 1000) + 's. The model may still be processing server-side.' };
+      rawText = '';
+    } else {
+      var msg = err.message || String(err);
+      if (msg === 'Failed to fetch' || /network|load failed/i.test(msg)) {
+        msg = 'Network error — check CORS (Lambda Function URL needs AllowOrigins=*, AllowMethods=POST,OPTIONS, AllowHeaders=content-type)';
+      }
+      parsed  = { error: msg };
+      rawText = '';
     }
-    data     = { error: msg };
-    duration = ((performance.now() - startTime) / 1000).toFixed(2);
-    isError  = true;
   }
 
+  var duration = ((performance.now() - startTime) / 1000).toFixed(2);
   completedJobs++;
   jobCounter.textContent = completedJobs + ' / ' + totalJobs;
 
-  updateResult(id, task, data, parseFloat(duration), isError);
-  resultStore.push({ task: task, data: data, time: parseFloat(duration), isError: isError });
-  latencyData.push({ label: task.platform + ' / ' + task.country, time: parseFloat(duration) });
+  var record = {
+    task:    task,
+    parsed:  parsed,
+    rawText: rawText,
+    status:  status,
+    time:    parseFloat(duration)
+  };
+  resultStore.push(record);
+  latencyData.push({ label: task.model + ' / ' + task.platform + ' / ' + task.country, time: parseFloat(duration), model: task.model });
+
+  renderResult(cardId, record);
 }
 
-// ── Render helpers ─────────────────────────────────────────────────────────
-function renderPlaceholder(id, task) {
-  var html = '<div id="' + id + '" class="result-card glass glass-hover rounded-2xl p-5 flex flex-col gap-3">' +
-    '<div class="flex justify-between items-start">' +
-      '<div>' +
-        '<h4 class="text-sm font-bold text-white">' + esc(task.platform) + ' — ' + esc(task.country) + '</h4>' +
-        '<p class="text-[10px] text-gray-500 uppercase tracking-tighter mt-0.5">' + esc(task.model) + ' | ' + esc(task.date) + '</p>' +
-      '</div>' +
-      '<div class="dot-loader flex gap-1 pt-1"><span></span><span></span><span></span></div>' +
-    '</div>' +
-    '<div class="h-28 w-full loading-shimmer rounded-xl"></div>' +
-  '</div>';
-  resultsContainer.insertAdjacentHTML('afterbegin', html);
+/* ─────────────────── safeParseResponse ─────────────────── */
+/*
+  Layered parser — never throws.
+  Returns:
+    - parsed object/array if successful
+    - { __isPlainText: true, text: rawText } if no JSON could be extracted
+    - { __parseError: true, error: msg, text: rawText } on all other cases
+*/
+function safeParseResponse(rawText) {
+  if (rawText === null || rawText === undefined) {
+    return { __parseError: true, error: 'Empty response', text: '' };
+  }
+  var text = String(rawText).trim();
+
+  // 1. Direct JSON parse
+  try {
+    var direct = JSON.parse(text);
+    return unwrapLambdaEnvelope(direct);
+  } catch (_) {}
+
+  // 2. Fenced code block  ```json ... ```
+  var fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenced) {
+    try {
+      var fromFenced = JSON.parse(fenced[1].trim());
+      return unwrapLambdaEnvelope(fromFenced);
+    } catch (_) {}
+  }
+
+  // 3. Extract first balanced { ... } substring
+  var extracted = extractFirstJSON(text, '{');
+  if (extracted !== null) {
+    try {
+      var fromObj = JSON.parse(extracted);
+      return unwrapLambdaEnvelope(fromObj);
+    } catch (_) {}
+  }
+
+  // 4. Extract first balanced [ ... ] substring
+  var extractedArr = extractFirstJSON(text, '[');
+  if (extractedArr !== null) {
+    try {
+      var fromArr = JSON.parse(extractedArr);
+      return fromArr;
+    } catch (_) {}
+  }
+
+  // 5. Give up — return as plain text
+  if (text.length > 0) {
+    return { __isPlainText: true, text: text };
+  }
+  return { __parseError: true, error: 'Empty or unreadable response', text: text };
 }
 
-function updateResult(id, task, data, time, isError) {
-  var el = document.getElementById(id);
+/* Unwrap { statusCode, body } Lambda envelope if present */
+function unwrapLambdaEnvelope(obj) {
+  if (obj && typeof obj === 'object' && !Array.isArray(obj) && typeof obj.body !== 'undefined') {
+    if (typeof obj.body === 'string') {
+      try {
+        return JSON.parse(obj.body);
+      } catch (_) {
+        // body is a string but not JSON — return body as plain text wrapper
+        if (obj.body.trim().length > 0) {
+          return { __isPlainText: true, text: obj.body };
+        }
+      }
+    } else if (obj.body !== null) {
+      return obj.body;
+    }
+  }
+  return obj;
+}
+
+/* Extract first balanced JSON substring starting with `open` char */
+function extractFirstJSON(text, open) {
+  var close = open === '{' ? '}' : ']';
+  var start = text.indexOf(open);
+  if (start === -1) return null;
+  var depth = 0;
+  var inStr  = false;
+  var escape = false;
+  for (var i = start; i < text.length; i++) {
+    var c = text[i];
+    if (escape) { escape = false; continue; }
+    if (c === '\\' && inStr) { escape = true; continue; }
+    if (c === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (c === open)  depth++;
+    if (c === close) { depth--; if (depth === 0) return text.slice(start, i + 1); }
+  }
+  return null;
+}
+
+/* ─────────────────── Render result card ─────────────────── */
+function renderResult(cardId, record) {
+  var el = document.getElementById(cardId);
   if (!el) return;
 
-  var titleText = esc(task.platform) + ' — ' + esc(task.country);
-  var metaText  = esc(task.model) + ' | ' + esc(task.date);
+  var task    = record.task;
+  var parsed  = record.parsed;
+  var status  = record.status;
+  var time    = record.time;
+  var rawText = record.rawText;
+
+  var isError   = status === 'error' || status === 'timeout';
+  var isTimeout = status === 'timeout';
+  var isPlain   = parsed && parsed.__isPlainText;
+  var isParseErr = parsed && parsed.__parseError;
+
   var timeLabel = time > 0 ? time + 's' : '';
-  var safeJSON  = JSON.stringify(data, null, 2);
 
-  // Build copy button with data attribute instead of inline onclick with embedded JSON
-  var copyBtnId = 'copy-' + id;
+  // Badge
+  var badgeHtml =
+    '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border model-badge-' + esc(task.model) + '">' +
+    esc(task.model) + '</span>';
 
-  var html =
-    '<div class="flex justify-between items-start mb-3">' +
-      '<div>' +
-        '<h4 class="text-sm font-bold ' + (isError ? 'text-red-400' : 'text-white') + '">' + titleText + '</h4>' +
-        '<div class="flex items-center gap-2 mt-1">' +
-          '<span class="text-[10px] text-gray-500 uppercase">' + metaText + '</span>' +
-          (timeLabel ? '<span class="text-[10px] font-mono ' + latencyColor(time) + '">' + timeLabel + '</span>' : '') +
-        '</div>' +
-      '</div>' +
-      '<button id="' + copyBtnId + '" class="p-2 hover:bg-white/5 rounded-lg transition-all tooltip" data-tip="Copy JSON">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>' +
-      '</button>' +
-    '</div>' +
-    '<div class="relative">' +
-      '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-64 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>' + syntaxHighlight(safeJSON) + '</code></pre>' +
-    '</div>';
-
-  el.innerHTML = html;
-  if (isError) {
-    el.classList.add('border-red-500/20', 'bg-red-500/[0.02]');
+  // Status chip
+  var statusChip = '';
+  if (isTimeout) {
+    statusChip = '<span class="text-[10px] bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2 py-0.5 rounded-full">timeout</span>';
+  } else if (isError) {
+    statusChip = '<span class="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-full">error</span>';
+  } else if (isPlain) {
+    statusChip = '<span class="text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-2 py-0.5 rounded-full">text</span>';
+  } else {
+    statusChip = '<span class="text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full">json</span>';
   }
 
-  // Attach copy handler safely via dataset
+  // Copy button + content
+  var copyBtnId = 'copy-' + cardId;
+  var contentToCopy = isPlain ? (parsed.text || rawText) : JSON.stringify(parsed, null, 2);
+  if (!contentToCopy) contentToCopy = rawText || '';
+
+  var preHtml = '';
+  if (isPlain || isParseErr) {
+    // Plain text display
+    var displayText = isPlain ? (parsed.text || '') : ((parsed && parsed.error) ? parsed.error : rawText);
+    preHtml = '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300 whitespace-pre-wrap break-words">' + esc(displayText) + '</pre>';
+  } else {
+    // JSON display
+    var jsonStr = JSON.stringify(parsed, null, 2);
+    preHtml = '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>' + syntaxHighlight(jsonStr) + '</code></pre>';
+  }
+
+  var html =
+    '<div class="flex items-center justify-between mb-2 gap-2 flex-wrap">' +
+      '<div class="flex items-center gap-2 flex-wrap">' +
+        badgeHtml + statusChip +
+        (timeLabel ? '<span class="text-[10px] font-mono ' + latencyColor(time) + '">' + esc(timeLabel) + '</span>' : '') +
+      '</div>' +
+      '<button id="' + copyBtnId + '" class="p-1.5 hover:bg-white/5 rounded-lg transition-all tooltip" data-tip="Copy output">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>' +
+      '</button>' +
+    '</div>' +
+    preHtml;
+
+  el.innerHTML = html;
+  if (isError || isTimeout) el.classList.add('opacity-80');
+
+  // Attach copy handler via property (no inline JSON in HTML)
   var copyBtn = document.getElementById(copyBtnId);
   if (copyBtn) {
-    copyBtn._jsonData = safeJSON;
-    copyBtn.addEventListener('click', function () {
-      copyToClipboard(copyBtn, copyBtn._jsonData);
-    });
+    copyBtn._copyText = contentToCopy;
+    copyBtn.addEventListener('click', function () { copyToClipboard(copyBtn, copyBtn._copyText); });
   }
 }
 
+/* ─────────────────── Latency color ─────────────────── */
 function latencyColor(t) {
-  if (t <= 10)  return 'text-green-400/80';
-  if (t <= 20)  return 'text-yellow-400/80';
+  if (t <= 10) return 'text-green-400/80';
+  if (t <= 20) return 'text-yellow-400/80';
   return 'text-red-400/80';
 }
 
-// ── Latency chart ──────────────────────────────────────────────────────────
+/* ─────────────────── Latency chart ─────────────────── */
 function renderLatencyChart() {
   if (latencyData.length === 0) return;
-  var max = Math.max.apply(null, latencyData.map(function(d){ return d.time; }));
+  var max = Math.max.apply(null, latencyData.map(function (d) { return d.time; }));
   latencyChart.innerHTML = '';
   latencyData.forEach(function (d) {
-    var pct = max > 0 ? (d.time / max) * 100 : 0;
+    var pct   = max > 0 ? (d.time / max) * 100 : 0;
     var color = d.time <= 10 ? '#4ade80' : d.time <= 20 ? '#fbbf24' : '#f87171';
-    var bar = document.createElement('div');
-    bar.className = 'flex flex-col items-center gap-1 min-w-[40px]';
+    var bar   = document.createElement('div');
+    bar.className = 'flex flex-col items-center gap-1 min-w-[36px]';
+    bar.title = d.label + ' — ' + d.time + 's';
     bar.innerHTML =
       '<span class="text-[9px] font-mono" style="color:' + color + '">' + d.time + 's</span>' +
-      '<div style="height:' + pct + '%;min-height:4px;width:20px;background:' + color + ';border-radius:4px 4px 0 0;opacity:0.8"></div>' +
-      '<span class="text-[8px] text-gray-600 text-center leading-tight" style="max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(d.label) + '">' + esc(d.label) + '</span>';
+      '<div style="height:' + pct + '%;min-height:3px;width:18px;background:' + color + ';border-radius:3px 3px 0 0;opacity:0.8"></div>' +
+      '<span class="text-[8px] text-gray-600 text-center leading-tight" style="max-width:44px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(d.model) + '</span>';
     latencyChart.appendChild(bar);
   });
 }
 
-// ── Competitive radar ──────────────────────────────────────────────────────
-function renderRadarCharts() {
-  radarContainer.innerHTML = '';
-  // Group by country
-  var byCountry = {};
-  resultStore.forEach(function (r) {
-    if (r.isError) return;
-    var c = r.task.country;
-    if (!byCountry[c]) byCountry[c] = [];
-    byCountry[c].push(r);
-  });
-
-  Object.keys(byCountry).forEach(function (country) {
-    var results = byCountry[country];
-    var platforms = results.map(function(r){ return r.task.platform; });
-    var times     = results.map(function(r){ return r.time; });
-    var maxT      = Math.max.apply(null, times) || 1;
-    var N         = platforms.length;
-    if (N < 2) return; // radar needs at least 2 axes
-
-    var size = 120;
-    var cx = size / 2, cy = size / 2, radius = 45;
-
-    // Build polygon points
-    var polyPts = [];
-    var axisPts = [];
-    for (var i = 0; i < N; i++) {
-      var angle = (Math.PI * 2 / N) * i - Math.PI / 2;
-      var r = radius * (times[i] / maxT);
-      polyPts.push((cx + r * Math.cos(angle)).toFixed(1) + ',' + (cy + r * Math.sin(angle)).toFixed(1));
-      axisPts.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle), label: platforms[i] });
-    }
-
-    var svgLines = axisPts.map(function(p){
-      return '<line x1="' + cx + '" y1="' + cy + '" x2="' + p.x.toFixed(1) + '" y2="' + p.y.toFixed(1) + '" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>';
-    }).join('');
-    var svgLabels = axisPts.map(function(p){
-      return '<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle">' + esc(p.label) + '</text>';
-    }).join('');
-
-    var svgHtml =
-      '<svg width="' + size + '" height="' + size + '" class="radar-svg overflow-visible">' +
-        '<circle cx="' + cx + '" cy="' + cy + '" r="' + radius + '" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>' +
-        '<circle cx="' + cx + '" cy="' + cy + '" r="' + (radius*0.5).toFixed(0) + '" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>' +
-        svgLines +
-        '<polygon points="' + polyPts.join(' ') + '" fill="rgba(59,130,246,0.2)" stroke="#3b82f6" stroke-width="1.5"/>' +
-        svgLabels +
-      '</svg>';
-
-    var card = document.createElement('div');
-    card.className = 'flex flex-col items-center gap-2';
-    card.innerHTML = svgHtml + '<p class="text-[10px] text-gray-500">' + esc(country) + ' — latency</p>';
-    radarContainer.appendChild(card);
-  });
-}
-
-function toggleRadar() {
-  radarMode = document.getElementById('radar-toggle').checked;
-  document.getElementById('radar-track').style.background = radarMode ? '#8b5cf6' : '';
-  document.getElementById('radar-thumb').style.transform  = radarMode ? 'translateX(16px)' : '';
-  document.getElementById('radar-label').textContent       = radarMode ? 'On' : 'Off';
-  if (radarMode && resultStore.length > 0) {
-    radarWrapper.classList.remove('hidden');
-    renderRadarCharts();
-  } else {
-    radarWrapper.classList.add('hidden');
-  }
-}
-
-// ── Export CSV ─────────────────────────────────────────────────────────────
+/* ─────────────────── Export CSV ─────────────────── */
 function exportCSV() {
   if (resultStore.length === 0) return;
 
-  var rows = [['model','country','platform','date','time_s','currency','noticias_count','error']];
+  var headers = ['model','country','platform','snapshot_date','duration_s','status','currency','noticias_count','has_json','raw_text_length','error_message'];
+  var rows = [headers];
+
   resultStore.forEach(function (r) {
-    var d = r.data;
+    var d  = r.parsed;
+    var isPlain = d && d.__isPlainText;
+    var hasJson = !isPlain && !r.parsed.__parseError && r.status !== 'error' && r.status !== 'timeout';
+    var currency = (hasJson && d && d.moneda) ? d.moneda : '';
+    var noticiasCt = (hasJson && d && d.noticias) ? d.noticias.length : '';
+    var errMsg = '';
+    if (r.status === 'error' || r.status === 'timeout') {
+      errMsg = (d && d.error) ? d.error : '';
+    }
     rows.push([
       csvCell(r.task.model),
       csvCell(r.task.country),
       csvCell(r.task.platform),
       csvCell(r.task.date),
       r.time,
-      csvCell(d.moneda || ''),
-      d.noticias ? d.noticias.length : 0,
-      csvCell(d.error || '')
+      csvCell(r.status),
+      csvCell(currency),
+      noticiasCt,
+      hasJson ? 'true' : 'false',
+      r.rawText ? r.rawText.length : 0,
+      csvCell(errMsg)
     ]);
   });
 
-  var csv = rows.map(function(r){ return r.join(','); }).join('\n');
+  var csv  = rows.map(function (r) { return r.join(','); }).join('\n');
   var blob = new Blob([csv], { type: 'text/csv' });
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
@@ -832,11 +1013,11 @@ function exportCSV() {
 }
 
 function csvCell(v) {
-  if (v == null) return '';
+  if (v === null || v === undefined) return '';
   return '"' + String(v).replace(/"/g, '""') + '"';
 }
 
-// ── localStorage ───────────────────────────────────────────────────────────
+/* ─────────────────── localStorage ─────────────────── */
 function saveToLocalStorage(state) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
 }
@@ -846,43 +1027,17 @@ function restoreFromLocalStorage() {
     var saved = localStorage.getItem(LS_KEY);
     if (!saved) return;
     var s = JSON.parse(saved);
-    // model
-    if (s.model) modelSelect.value = s.model;
-    // date
-    if (s.date) dateInput.value = s.date;
-    // countries
+    if (s.date)   dateInput.value = s.date;
+
+    // Restore models (new format: array; old format: single string under "model")
+    var modelArr = s.models || (s.model ? [s.model] : []);
+    modelArr.forEach(function (v) {
+      var cb = document.querySelector('input[name="model"][value="' + v + '"]');
+      if (cb) cb.checked = true;
+    });
+
     if (s.countries) {
       s.countries.forEach(function (c) {
-        var cb = document.querySelector('input[name="country"][value="' + c + '"]');
-        if (cb) cb.checked = true;
-        else {
-          var custom = document.getElementById('custom-country');
-          custom.value = custom.value ? custom.value + ', ' + c : c;
-        }
-      });
-    }
-    // platforms
-    if (s.platforms) {
-      s.platforms.forEach(function (p) {
-        var cb = document.querySelector('input[name="platform"][value="' + p + '"]');
-        if (cb) cb.checked = true;
-        else {
-          var custom = document.getElementById('custom-platform');
-          custom.value = custom.value ? custom.value + ', ' + p : p;
-        }
-      });
-    }
-  } catch (e) {}
-}
-
-// ── URL share ──────────────────────────────────────────────────────────────
-function restoreFromURL() {
-  try {
-    var params = new URLSearchParams(window.location.search);
-    if (params.get('model'))     modelSelect.value = params.get('model');
-    if (params.get('date'))      dateInput.value   = params.get('date');
-    if (params.get('countries')) {
-      parseCSV(params.get('countries')).forEach(function (c) {
         var cb = document.querySelector('input[name="country"][value="' + c + '"]');
         if (cb) cb.checked = true;
         else {
@@ -891,8 +1046,8 @@ function restoreFromURL() {
         }
       });
     }
-    if (params.get('platforms')) {
-      parseCSV(params.get('platforms')).forEach(function (p) {
+    if (s.platforms) {
+      s.platforms.forEach(function (p) {
         var cb = document.querySelector('input[name="platform"][value="' + p + '"]');
         if (cb) cb.checked = true;
         else {
@@ -904,30 +1059,41 @@ function restoreFromURL() {
   } catch (e) {}
 }
 
-function shareURL() {
-  var checkedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(function(i){ return i.value; });
-  var checkedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function(i){ return i.value; });
-  var manualCountries  = parseCSV(document.getElementById('custom-country').value);
-  var manualPlatforms  = parseCSV(document.getElementById('custom-platform').value);
-
-  var allC = dedup(checkedCountries.concat(manualCountries));
-  var allP = dedup(checkedPlatforms.concat(manualPlatforms));
-
-  var params = new URLSearchParams({
-    model:     modelSelect.value,
-    date:      dateInput.value,
-    countries: allC.join(','),
-    platforms: allP.join(',')
-  });
-
-  var shareLink = window.location.origin + window.location.pathname + '?' + params.toString();
-  navigator.clipboard.writeText(shareLink).then(function () {
-    showToast('🔗 Link copied to clipboard');
-  }).catch(function () {
-    showToast('📋 ' + shareLink);
-  });
+/* ─────────────────── UI state helpers ─────────────────── */
+function setRunning(running) {
+  runBtn.disabled  = running;
+  shareBtn.disabled = running;
+  if (running) {
+    runBtnText.textContent = 'Processing…';
+    runBtnIcon.outerHTML =
+      '<span id="run-btn-icon" class="dot-loader flex gap-1"><span></span><span></span><span></span></span>';
+  } else {
+    runBtnText.textContent = 'Run Intelligence Scan';
+    var icon = document.getElementById('run-btn-icon');
+    if (icon) {
+      icon.outerHTML =
+        '<svg id="run-btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+    }
+    updateSummary(); // re-evaluate disabled
+  }
 }
 
+function clearResults() {
+  resultsContainer.innerHTML = '';
+  latencyChart.innerHTML     = '';
+  resultStore  = [];
+  latencyData  = [];
+  resultsWrapper.classList.add('hidden');
+  chartWrapper.classList.add('hidden');
+  exportBtn.classList.add('hidden');
+  jobCounter.textContent = '0 / 0';
+}
+
+function setDefaultDate() {
+  dateInput.value = new Date().toISOString().split('T')[0];
+}
+
+/* ─────────────────── Toast ─────────────────── */
 function showToast(msg) {
   shareToast.textContent = msg;
   shareToast.classList.remove('hidden');
@@ -938,108 +1104,18 @@ function showToast(msg) {
   }, 2800);
 }
 
-// ── Endpoint health check ──────────────────────────────────────────────────
-function checkEndpointHealth() {
-  var dot   = document.getElementById('health-dot');
-  var label = document.getElementById('health-label');
-
-  // Use OPTIONS preflight as health ping (lightweight)
-  var controller = new AbortController();
-  var timeout    = setTimeout(function () { controller.abort(); }, 6000);
-
-  fetch(API_URL, { method: 'OPTIONS', signal: controller.signal })
-    .then(function (r) {
-      clearTimeout(timeout);
-      dot.className   = 'w-2 h-2 rounded-full health-dot-ok';
-      label.textContent = 'Endpoint reachable';
-    })
-    .catch(function (e) {
-      clearTimeout(timeout);
-      if (e.name === 'AbortError') {
-        dot.className   = 'w-2 h-2 rounded-full health-dot-err';
-        label.textContent = 'Endpoint timeout';
-      } else {
-        // CORS preflight rejection still means the server responded
-        dot.className   = 'w-2 h-2 rounded-full health-dot-ok';
-        label.textContent = 'Endpoint reachable (CORS restricted)';
-      }
-    });
+/* ─────────────────── Clipboard ─────────────────── */
+function copyToClipboard(btn, text) {
+  navigator.clipboard.writeText(text).then(function () {
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    setTimeout(function () { btn.innerHTML = orig; }, 2000);
+  }).catch(function () { showToast('Clipboard write failed'); });
 }
 
-// ── Live monitor ───────────────────────────────────────────────────────────
-function toggleMonitor() {
-  monitorActive = !monitorActive;
-  var dot   = document.getElementById('monitor-dot');
-  var label = document.getElementById('monitor-label');
-  if (monitorActive) {
-    dot.className    = 'w-2 h-2 rounded-full bg-red-500 live-badge';
-    label.textContent = 'Live Monitor: ON';
-    liveBadge.classList.remove('hidden');
-    monitorTimer = setInterval(checkEndpointHealth, 30000);
-  } else {
-    dot.className    = 'w-2 h-2 rounded-full bg-gray-600';
-    label.textContent = 'Live Monitor: OFF';
-    liveBadge.classList.add('hidden');
-    clearInterval(monitorTimer);
-  }
-}
-
-// ── Auto-refresh ───────────────────────────────────────────────────────────
-function toggleAutoRefresh() {
-  autoRefresh = !autoRefresh;
-  var label = document.getElementById('autorefresh-label');
-  if (autoRefresh) {
-    label.textContent = 'Auto-refresh: ON (60s)';
-    scheduleAutoRefresh();
-  } else {
-    label.textContent = 'Auto-refresh: OFF';
-    clearTimeout(autoRefreshTimer);
-  }
-}
-
-function scheduleAutoRefresh() {
-  clearTimeout(autoRefreshTimer);
-  autoRefreshTimer = setTimeout(function () {
-    if (autoRefresh) runIntelligenceScan();
-  }, 60000);
-}
-
-// ── UI helpers ─────────────────────────────────────────────────────────────
-function setRunning(running) {
-  runBtn.disabled = running;
-  if (running) {
-    runBtnText.textContent = 'Processing…';
-    runBtnIcon.outerHTML =
-      '<span id="run-btn-icon" class="dot-loader flex gap-1">' +
-      '<span></span><span></span><span></span></span>';
-  } else {
-    runBtnText.textContent = 'Run Intelligence Scan';
-    var icon = document.getElementById('run-btn-icon');
-    if (icon) {
-      icon.outerHTML =
-        '<svg id="run-btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
-    }
-    runBtn.disabled = false;
-    updateSummary(); // re-evaluate disabled state
-  }
-}
-
-function clearResults() {
-  resultsContainer.innerHTML = '';
-  latencyChart.innerHTML     = '';
-  radarContainer.innerHTML   = '';
-  resultStore  = [];
-  latencyData  = [];
-  resultsWrapper.classList.add('hidden');
-  chartWrapper.classList.add('hidden');
-  radarWrapper.classList.add('hidden');
-  exportBtn.classList.add('hidden');
-  jobCounter.textContent = '0 / 0';
-}
-
-// ── JSON syntax highlight ──────────────────────────────────────────────────
+/* ─────────────────── JSON syntax highlight ─────────────────── */
 function syntaxHighlight(jsonStr) {
-  var safe = jsonStr
+  var safe = String(jsonStr)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
@@ -1047,35 +1123,20 @@ function syntaxHighlight(jsonStr) {
     /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
     function (match) {
       if (/^"/.test(match)) {
-        if (/:$/.test(match)) return '<span class="json-key">' + match + '</span>';
-        return '<span class="json-string">' + match + '</span>';
+        if (/:$/.test(match)) return '<span class="json-key">'    + match + '</span>';
+        return                        '<span class="json-string">' + match + '</span>';
       }
-      if (/true|false/.test(match)) return '<span class="json-bool">' + match + '</span>';
-      if (/null/.test(match))       return '<span class="json-null">' + match + '</span>';
-      return '<span class="json-number">' + match + '</span>';
+      if (/true|false/.test(match)) return '<span class="json-bool">'   + match + '</span>';
+      if (/null/.test(match))       return '<span class="json-null">'   + match + '</span>';
+      return                                '<span class="json-number">' + match + '</span>';
     }
   );
 }
 
-// ── Clipboard ─────────────────────────────────────────────────────────────
-function copyToClipboard(btn, text) {
-  navigator.clipboard.writeText(text).then(function () {
-    var orig = btn.innerHTML;
-    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-    setTimeout(function () { btn.innerHTML = orig; }, 2000);
-  });
-}
-
-function copyText(text) {
-  navigator.clipboard.writeText(text);
-}
-
-// ── Utilities ──────────────────────────────────────────────────────────────
+/* ─────────────────── Utilities ─────────────────── */
 function parseCSV(str) {
   if (!str) return [];
-  return str.split(',')
-    .map(function (s) { return s.trim(); })
-    .filter(function (s) { return s.length > 0; });
+  return str.split(',').map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
 }
 
 function dedup(arr) {
