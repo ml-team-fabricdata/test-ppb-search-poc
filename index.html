@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Price Signal Intelligence — Fabric AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            brand: {
+              black: '#050505',
+              dark: '#0f1115',
+              border: '#1f2937',
+              accent: '#3b82f6',
+              purple: '#8b5cf6',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #050505;
+      color: #e5e7eb;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .glass {
+      background: rgba(15, 17, 21, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-gradient {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      transition: all 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .loading-shimmer {
+      background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite linear;
+    }
+
+    .checkbox-card input:checked + div {
+      border-color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    .json-key { color: #93c5fd; }
+    .json-string { color: #a5b4fc; }
+    .json-number { color: #6ee7b7; }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-blue-500/30">
+
+  <!-- Header -->
+  <header class="pt-12 pb-8 px-4 relative overflow-hidden">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-64 bg-blue-600/10 blur-[120px] pointer-events-none"></div>
+    <div class="max-w-5xl mx-auto text-center relative z-10">
+      <img src="https://framerusercontent.com/assets/YhHtO4AfpyCgmWFZ6i3dcmRLcAI.png" alt="Fabric AI" class="h-8 mx-auto mb-6 opacity-90">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+        AI Price Signal <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Intelligence</span>
+      </h1>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+        High-fidelity pricing data extraction and competitive intelligence powered by advanced language models.
+      </p>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 pb-24">
+    
+    <!-- Query Panel -->
+    <div class="glass rounded-3xl p-6 md:p-8 mb-10 shadow-2xl">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Params -->
+        <div class="lg:col-span-8 space-y-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Model -->
+            <div class="space-y-3">
+              <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2" title="Select the AI agent to process signals">
+                Execution Model <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+              </label>
+              <select id="model" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
+                <option value="perplexity">Perplexity (Real-time Search)</option>
+                <option value="claude">Claude 3.5 Sonnet</option>
+                <option value="gemini">Gemini 1.5 Pro</option>
+              </select>
+            </div>
+
+            <!-- Date -->
+            <div class="space-y-3">
+              <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2" title="Snapshot date for historical data">
+                Snapshot Date <span class="w-1 h-1 rounded-full bg-purple-500"></span>
+              </label>
+              <input type="date" id="date" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors invert-[0.9] brightness-[0.9]">
+            </div>
+          </div>
+
+          <!-- Multi-selectors -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Countries -->
+            <div class="space-y-4">
+              <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Target Countries</label>
+              <div class="grid grid-cols-2 gap-2" id="countries-list">
+                <!-- JS populated -->
+              </div>
+            </div>
+            <!-- Platforms -->
+            <div class="space-y-4">
+              <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Competitive Platforms</label>
+              <div class="grid grid-cols-2 gap-2" id="platforms-list">
+                <!-- JS populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: CTA -->
+        <div class="lg:col-span-4 flex flex-col justify-end border-t lg:border-t-0 lg:border-l border-white/5 pt-8 lg:pt-0 lg:pl-8">
+          <div class="bg-blue-500/5 rounded-2xl p-5 mb-6 border border-blue-500/10">
+            <h4 class="text-sm font-semibold text-blue-400 mb-2">Request Summary</h4>
+            <p id="summary-text" class="text-xs text-gray-400 leading-relaxed">
+              Select parameters to see intelligence scan details.
+            </p>
+          </div>
+          <button id="run-btn" class="btn-gradient w-full py-4 rounded-2xl font-bold text-white shadow-lg flex items-center justify-center gap-3">
+            <span>Run Intelligence Scan</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-wrapper" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-bold flex items-center gap-3">
+          Intelligence Outputs
+          <span id="job-counter" class="bg-blue-500/10 text-blue-400 text-xs py-1 px-3 rounded-full border border-blue-500/20">0/0</span>
+        </h3>
+        <button onclick="clearResults()" class="text-xs text-gray-500 hover:text-white transition-colors">Clear all</button>
+      </div>
+      <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Results append here -->
+      </div>
+    </div>
+
+    <!-- API Documentation -->
+    <section class="mt-20 pt-16 border-t border-white/5">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-bold mb-2">API Usage & Integration</h2>
+        <p class="text-gray-400 mb-8 font-light">Direct programmatic access to the pricing intelligence engine.</p>
+        
+        <div class="space-y-6">
+          <!-- Endpoint Info -->
+          <div class="glass rounded-2xl p-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+              <div>
+                <span class="bg-green-500/10 text-green-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded mb-2 inline-block border border-green-500/20">POST</span>
+                <code class="block text-sm text-blue-300 break-all font-mono">https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/</code>
+              </div>
+              <button onclick="copyText('https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/')" class="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <p class="text-[11px] font-bold text-gray-500 uppercase">Schema</p>
+                <ul class="text-xs space-y-2 text-gray-400">
+                  <li><code class="text-blue-400">modelo</code> <span class="opacity-50">string</span> - "perplexity", "claude", "gemini"</li>
+                  <li><code class="text-blue-400">pais</code> <span class="opacity-50">string</span> - Target country</li>
+                  <li><code class="text-blue-400">plataforma</code> <span class="opacity-50">string</span> - Streaming platform</li>
+                  <li><code class="text-blue-400">fecha</code> <span class="opacity-50">string</span> - Format: DD/MM/YYYY</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Samples -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- cURL -->
+            <div class="glass rounded-2xl p-5 overflow-hidden">
+              <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">cURL Request</p>
+              <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">curl -X POST [ENDPOINT] -H "Content-Type: application/json" -d '{
+  "modelo":"perplexity",
+  "pais":"Argentina",
+  "plataforma":"Netflix",
+  "fecha":"24/02/2026"
+}'</pre>
+            </div>
+            <!-- Python -->
+            <div class="glass rounded-2xl p-5 overflow-hidden">
+              <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">Python (Requests)</p>
+              <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">import requests
+
+res = requests.post(url, json={
+    "modelo": "perplexity",
+    "pais": "Brazil",
+    "plataforma": "Disney+",
+    "fecha": "24/02/2026"
+})
+print(res.json())</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-12 border-t border-white/5 text-center">
+    <div class="opacity-40 hover:opacity-100 transition-opacity">
+      <img src="https://framerusercontent.com/assets/YhHtO4AfpyCgmWFZ6i3dcmRLcAI.png" alt="Fabric" class="h-4 mx-auto mb-3 grayscale">
+      <p class="text-[10px] uppercase tracking-[0.2em] font-medium">Powered by Fabric AI Intelligence Engine</p>
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = 'https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/';
+    
+    const COUNTRIES = ["Argentina", "Brazil", "Chile", "Spain", "United States"];
+    const PLATFORMS = ["Netflix", "Disney+", "Amazon Prime Video", "Max", "Apple TV+"];
+
+    const countriesList = document.getElementById('countries-list');
+    const platformsList = document.getElementById('platforms-list');
+    const runBtn = document.getElementById('run-btn');
+    const resultsContainer = document.getElementById('results-container');
+    const resultsWrapper = document.getElementById('results-wrapper');
+    const dateInput = document.getElementById('date');
+    const modelSelect = document.getElementById('model');
+    const summaryText = document.getElementById('summary-text');
+    const jobCounter = document.getElementById('job-counter');
+
+    // Init
+    window.onload = () => {
+      // Set default date to today
+      const today = new Date();
+      dateInput.value = today.toISOString().split('T')[0];
+
+      // Populate Countries
+      COUNTRIES.forEach(c => {
+        countriesList.innerHTML += createCheckbox(c, 'country');
+      });
+
+      // Populate Platforms
+      PLATFORMS.forEach(p => {
+        platformsList.innerHTML += createCheckbox(p, 'platform');
+      });
+
+      updateSummary();
+    };
+
+    function createCheckbox(label, type) {
+      return `
+        <label class="checkbox-card cursor-pointer group">
+          <input type="checkbox" name="${type}" value="${label}" class="hidden" onchange="updateSummary()">
+          <div class="border border-white/5 bg-white/[0.02] rounded-xl px-3 py-2 text-xs group-hover:border-white/20 transition-all">
+            ${label}
+          </div>
+        </label>
+      `;
+    }
+
+    function updateSummary() {
+      const c = document.querySelectorAll('input[name="country"]:checked').length;
+      const p = document.querySelectorAll('input[name="platform"]:checked').length;
+      const total = c * p;
+      summaryText.innerText = total > 0 
+        ? `This will execute ${total} separate request(s) using ${modelSelect.value} for the selected combinations.`
+        : "Select at least one country and one platform to proceed.";
+      runBtn.disabled = total === 0;
+      runBtn.style.opacity = total === 0 ? '0.5' : '1';
+    }
+
+    async function runIntelligenceScan() {
+      const selectedModel = modelSelect.value;
+      const selectedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(i => i.value);
+      const selectedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(i => i.value);
+      const rawDate = dateInput.value;
+      const formattedDate = rawDate.split('-').reverse().join('/');
+
+      resultsWrapper.classList.remove('hidden');
+      runBtn.disabled = true;
+      runBtn.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></span> Processing Tasks...`;
+
+      const tasks = [];
+      selectedCountries.forEach(country => {
+        selectedPlatforms.forEach(platform => {
+          tasks.push({ model: selectedModel, country, platform, date: formattedDate });
+        });
+      });
+
+      let completed = 0;
+      jobCounter.innerText = `0 / ${tasks.length}`;
+
+      const processTask = async (task) => {
+        const id = 'res-' + Math.random().toString(36).substr(2, 9);
+        renderPlaceholder(id, task);
+        
+        const startTime = performance.now();
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              modelo: task.model,
+              pais: task.country,
+              plataforma: task.platform,
+              fecha: task.date
+            })
+          });
+
+          const data = await response.json();
+          const duration = ((performance.now() - startTime) / 1000).toFixed(2);
+          updateResult(id, data, duration, false);
+        } catch (error) {
+          updateResult(id, { error: error.message }, 0, true);
+        } finally {
+          completed++;
+          jobCounter.innerText = `${completed} / ${tasks.length}`;
+        }
+      };
+
+      // Run in parallel
+      await Promise.all(tasks.map(t => processTask(t)));
+
+      runBtn.disabled = false;
+      runBtn.innerHTML = `<span>Run Intelligence Scan</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+    }
+
+    function renderPlaceholder(id, task) {
+      const html = `
+        <div id="${id}" class="glass rounded-2xl p-5 border-white/10 flex flex-col gap-3">
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="text-sm font-bold text-white">${task.platform} — ${task.country}</h4>
+              <p class="text-[10px] text-gray-500 uppercase tracking-tighter">${task.model} | ${task.date}</p>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+            </div>
+          </div>
+          <div class="h-32 w-full loading-shimmer rounded-xl opacity-20"></div>
+        </div>
+      `;
+      resultsContainer.insertAdjacentHTML('afterbegin', html);
+    }
+
+    function updateResult(id, data, time, isError) {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const jsonStr = JSON.stringify(data, null, 2);
+      
+      el.innerHTML = `
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <h4 class="text-sm font-bold ${isError ? 'text-red-400' : 'text-white'}">${el.querySelector('h4').innerText}</h4>
+            <div class="flex items-center gap-2 mt-1">
+               <span class="text-[10px] text-gray-500 uppercase">${el.querySelector('p').innerText}</span>
+               <span class="text-[10px] text-green-500/80 font-mono">${time > 0 ? time + 's' : ''}</span>
+            </div>
+          </div>
+          <button onclick="copyToClipboard(this, \`${jsonStr.replace(/`/g, '\`')}\`)" class="p-2 hover:bg-white/5 rounded-lg transition-all" title="Copy JSON">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          </button>
+        </div>
+        <div class="relative group">
+          <pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-60 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>${syntaxHighlight(data)}</code></pre>
+        </div>
+      `;
+      
+      if(isError) el.classList.add('border-red-500/20', 'bg-red-500/[0.02]');
+    }
+
+    function syntaxHighlight(json) {
+      if (typeof json != 'string') {
+        json = JSON.stringify(json, undefined, 2);
+      }
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\u[a-zA-Z0-9]{4}|\[^u]|[^\"])*"(\s*:)?|(true|false|null)|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'json-number';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'json-key';
+          } else {
+            cls = 'json-string';
+          }
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    function copyToClipboard(btn, text) {
+      navigator.clipboard.writeText(text);
+      const original = btn.innerHTML;
+      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+      setTimeout(() => btn.innerHTML = original, 2000);
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+    }
+
+    function clearResults() {
+      resultsContainer.innerHTML = '';
+      resultsWrapper.classList.add('hidden');
+      jobCounter.innerText = '0/0';
+    }
+
+    runBtn.addEventListener('click', runIntelligenceScan);
+  </script>
+</body>
+</html>
