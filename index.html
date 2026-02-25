@@ -145,6 +145,12 @@
               <div class="grid grid-cols-2 gap-2" id="countries-list">
                 <!-- JS populated -->
               </div>
+              <input 
+                type="text" 
+                id="custom-country"
+                placeholder="Add countries separated by comma (e.g. Argentina, Uruguay, Mexico)"
+                class="w-full mt-3 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
+              />
             </div>
             <!-- Platforms -->
             <div class="space-y-4">
@@ -152,6 +158,11 @@
               <div class="grid grid-cols-2 gap-2" id="platforms-list">
                 <!-- JS populated -->
               </div>
+              <input 
+                type="text" 
+                id="custom-platform"
+                placeholder="Add platforms separated by comma (e.g. Netflix, Disney, Paramount+)"
+                class="w-full mt-3 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
             </div>
           </div>
         </div>
@@ -301,22 +312,59 @@ print(res.json())</pre>
         </label>
       `;
     }
-
+    
     function updateSummary() {
-      const c = document.querySelectorAll('input[name="country"]:checked').length;
-      const p = document.querySelectorAll('input[name="platform"]:checked').length;
+    
+      let c = document.querySelectorAll('input[name="country"]:checked').length;
+      let p = document.querySelectorAll('input[name="platform"]:checked').length;
+    
+      const manualCountries = document.getElementById("custom-country").value
+        .split(",")
+        .map(x => x.trim())
+        .filter(x => x.length > 0);
+    
+      const manualPlatforms = document.getElementById("custom-platform").value
+        .split(",")
+        .map(x => x.trim())
+        .filter(x => x.length > 0);
+    
+      c += manualCountries.length;
+      p += manualPlatforms.length;
+    
       const total = c * p;
+    
       summaryText.innerText = total > 0 
         ? `This will execute ${total} separate request(s) using ${modelSelect.value} for the selected combinations.`
         : "Select at least one country and one platform to proceed.";
+    
       runBtn.disabled = total === 0;
       runBtn.style.opacity = total === 0 ? '0.5' : '1';
     }
 
     async function runIntelligenceScan() {
       const selectedModel = modelSelect.value;
-      const selectedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(i => i.value);
-      const selectedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(i => i.value);
+      let selectedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(i => i.value);
+      let selectedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(i => i.value);
+      // manual countries
+      const manualCountries = document.getElementById("custom-country").value
+        .split(",")
+        .map(x => x.trim())
+        .filter(x => x.length > 0);
+      
+      // manual platforms
+      const manualPlatforms = document.getElementById("custom-platform").value
+        .split(",")
+        .map(x => x.trim())
+        .filter(x => x.length > 0);
+      
+      // merge
+      selectedCountries = [...selectedCountries, ...manualCountries];
+      selectedPlatforms = [...selectedPlatforms, ...manualPlatforms];
+      
+      // remove duplicates
+      selectedCountries = [...new Set(selectedCountries)];
+      selectedPlatforms = [...new Set(selectedPlatforms)];
+      
       const rawDate = dateInput.value;
       const formattedDate = rawDate.split('-').reverse().join('/');
 
@@ -351,11 +399,17 @@ print(res.json())</pre>
             })
           });
 
-          const data = await response.json();
+          const raw = await response.json();
+          const data = raw.body ? (typeof raw.body === "string" ? JSON.parse(raw.body) : raw.body) : raw;
           const duration = ((performance.now() - startTime) / 1000).toFixed(2);
           updateResult(id, data, duration, false);
-        } catch (error) {
-          updateResult(id, { error: error.message }, 0, true);
+        }catch (error) {
+            let msg = error.message;
+            if(msg === "Failed to fetch"){
+              msg = "CORS blocked or Lambda not reachable from browser";
+            }
+            updateResult(id, { error: msg }, 0, true);
+          } 
         } finally {
           completed++;
           jobCounter.innerText = `${completed} / ${tasks.length}`;
