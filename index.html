@@ -7,7 +7,7 @@
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,467 +43,1059 @@
     }
 
     .glass {
-      background: rgba(15, 17, 21, 0.8);
+      background: rgba(15, 17, 21, 0.85);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-hover:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(15, 17, 21, 0.95);
     }
 
     .btn-gradient {
       background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
       transition: all 0.3s ease;
     }
-
-    .btn-gradient:hover {
-      opacity: 0.9;
+    .btn-gradient:hover:not(:disabled) {
+      opacity: 0.92;
       transform: translateY(-1px);
-      box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 12px 24px -6px rgba(59, 130, 246, 0.45);
+    }
+    .btn-gradient:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.1);
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-    }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
+    /* ── Shimmer loading ── */
     @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
     }
-
     .loading-shimmer {
-      background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+      background: linear-gradient(90deg, #1a2030 25%, #243044 50%, #1a2030 75%);
       background-size: 200% 100%;
-      animation: shimmer 1.5s infinite linear;
+      animation: shimmer 1.6s infinite linear;
     }
 
+    /* ── OpenAI-style dots loader ── */
+    @keyframes bounce-dot {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+      40%            { transform: scale(1);   opacity: 1;   }
+    }
+    .dot-loader span {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: white;
+      animation: bounce-dot 1.2s infinite ease-in-out;
+    }
+    .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
+    .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ── Checkbox cards ── */
     .checkbox-card input:checked + div {
       border-color: #3b82f6;
-      background-color: rgba(59, 130, 246, 0.1);
+      background-color: rgba(59, 130, 246, 0.12);
+      color: #93c5fd;
+    }
+    .checkbox-card div {
+      transition: border-color 0.15s, background-color 0.15s, color 0.15s;
     }
 
-    .json-key { color: #93c5fd; }
-    .json-string { color: #a5b4fc; }
+    /* ── JSON syntax ── */
+    .json-key    { color: #93c5fd; }
+    .json-string { color: #c4b5fd; }
     .json-number { color: #6ee7b7; }
+    .json-bool   { color: #fbbf24; }
+    .json-null   { color: #f87171; }
+
+    /* ── Health indicator pulse ── */
+    @keyframes health-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0);  }
+    }
+    .health-dot-ok  { background:#4ade80; animation: health-pulse 2s infinite; }
+    .health-dot-err { background:#f87171; }
+    .health-dot-chk { background:#fbbf24; animation: shimmer 1s infinite linear; }
+
+    /* ── Radar chart ── */
+    .radar-svg text { font-family: 'Fira Code', monospace; font-size: 9px; fill: #6b7280; }
+
+    /* ── Live monitor badge ── */
+    @keyframes live-blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .live-badge { animation: live-blink 1.2s infinite; }
+
+    /* ── Glow accent line ── */
+    .accent-glow {
+      background: linear-gradient(90deg, transparent, #3b82f6 40%, #8b5cf6 60%, transparent);
+      height: 1px;
+      opacity: 0.4;
+    }
+
+    /* ── Result card enter animation ── */
+    @keyframes card-in {
+      from { opacity:0; transform: translateY(8px); }
+      to   { opacity:1; transform: translateY(0);   }
+    }
+    .result-card { animation: card-in 0.25s ease-out; }
+
+    /* ── Tooltip ── */
+    .tooltip { position: relative; }
+    .tooltip:hover::after {
+      content: attr(data-tip);
+      position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+      background: #1f2937; color: #e5e7eb; font-size: 10px; white-space: nowrap;
+      padding: 4px 8px; border-radius: 6px; pointer-events: none; z-index: 50;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* date input styling on dark bg */
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+    input[type="date"] { color-scheme: dark; }
+
+    /* ── Share toast ── */
+    #share-toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      background: #1f2937; border: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 16px; border-radius: 12px; font-size: 13px;
+      transition: opacity 0.4s; pointer-events: none;
+    }
+    #share-toast.hidden { opacity: 0; }
   </style>
 </head>
 <body class="min-h-screen selection:bg-blue-500/30">
 
-  <!-- Header -->
-  <header class="pt-12 pb-8 px-4 relative overflow-hidden">
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-64 bg-blue-600/10 blur-[120px] pointer-events-none"></div>
-    <div class="max-w-5xl mx-auto text-center relative z-10">
-      <img src="https://framerusercontent.com/assets/YhHtO4AfpyCgmWFZ6i3dcmRLcAI.png" alt="Fabric AI" class="h-8 mx-auto mb-6 opacity-90">
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
-        AI Price Signal <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Intelligence</span>
-      </h1>
-      <p class="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-        High-fidelity pricing data extraction and competitive intelligence powered by advanced language models.
-      </p>
+<!-- ── Share toast ── -->
+<div id="share-toast" class="hidden">🔗 Link copied to clipboard</div>
+
+<!-- ── Header ── -->
+<header class="pt-12 pb-8 px-4 relative overflow-hidden">
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-72 bg-blue-600/8 blur-[140px] pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto text-center relative z-10">
+    <img src="https://framerusercontent.com/assets/YhHtO4AfpyCgmWFZ6i3dcmRLcAI.png" alt="Fabric AI" class="h-8 mx-auto mb-6 opacity-90">
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-white">
+      AI Price Signal <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Intelligence</span>
+    </h1>
+    <p class="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+      High-fidelity pricing data extraction and competitive intelligence powered by advanced language models.
+    </p>
+
+    <!-- ── Health + Monitor bar ── -->
+    <div class="mt-6 flex items-center justify-center gap-5 flex-wrap">
+      <!-- Endpoint health -->
+      <div class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs">
+        <span id="health-dot" class="w-2 h-2 rounded-full health-dot-chk"></span>
+        <span id="health-label" class="text-gray-400">Checking endpoint…</span>
+      </div>
+      <!-- Live monitor toggle -->
+      <button id="monitor-toggle" onclick="toggleMonitor()" class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs text-gray-400 hover:border-white/10 transition-colors">
+        <span id="monitor-dot" class="w-2 h-2 rounded-full bg-gray-600"></span>
+        <span id="monitor-label">Live Monitor: OFF</span>
+      </button>
+      <!-- Auto-refresh toggle -->
+      <button id="autorefresh-toggle" onclick="toggleAutoRefresh()" class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs text-gray-400 hover:border-white/10 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        <span id="autorefresh-label">Auto-refresh: OFF</span>
+      </button>
+      <!-- Share button -->
+      <button onclick="shareURL()" class="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-full px-4 py-1.5 text-xs text-gray-400 hover:border-white/10 transition-colors tooltip" data-tip="Copy shareable link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        Share Query
+      </button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main class="max-w-6xl mx-auto px-4 pb-24">
-    
-    <!-- Query Panel -->
-    <div class="glass rounded-3xl p-6 md:p-8 mb-10 shadow-2xl">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left Column: Params -->
-        <div class="lg:col-span-8 space-y-8">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Model -->
-            <div class="space-y-3">
-              <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2" title="Select the AI agent to process signals">
-                Execution Model <span class="w-1 h-1 rounded-full bg-blue-500"></span>
-              </label>
-              <select id="model" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
-                <option value="perplexity">Perplexity (Real-time Search)</option>
-                <option value="claude">Claude 3.5 Sonnet</option>
-                <option value="gemini">Gemini 1.5 Pro</option>
-              </select>
-            </div>
+<div class="accent-glow max-w-6xl mx-auto my-2 px-4"></div>
 
-            <!-- Date -->
-            <div class="space-y-3">
-              <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2" title="Snapshot date for historical data">
-                Snapshot Date <span class="w-1 h-1 rounded-full bg-purple-500"></span>
-              </label>
-              <input type="date" id="date" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors invert-[0.9] brightness-[0.9]">
-            </div>
+<main class="max-w-6xl mx-auto px-4 pb-24">
+
+  <!-- ── Query Panel ── -->
+  <div class="glass rounded-3xl p-6 md:p-8 mb-10 shadow-2xl mt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+      <!-- Left Column: Params -->
+      <div class="lg:col-span-8 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Model -->
+          <div class="space-y-3">
+            <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2">
+              Execution Model <span class="w-1 h-1 rounded-full bg-blue-500"></span>
+            </label>
+            <select id="model" onchange="updateSummary()" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors cursor-pointer appearance-none">
+              <option value="perplexity">Perplexity (Real-time Search)</option>
+              <option value="claude">Claude 3.5 Sonnet + Tavily</option>
+              <option value="gemini">Gemini 2.5 Flash</option>
+            </select>
           </div>
 
-          <!-- Multi-selectors -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Countries -->
-            <div class="space-y-4">
-              <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Target Countries</label>
-              <div class="grid grid-cols-2 gap-2" id="countries-list">
-                <!-- JS populated -->
-              </div>
-              <input 
-                type="text" 
-                id="custom-country"
-                placeholder="Add countries separated by comma (e.g. Argentina, Uruguay, Mexico)"
-                class="w-full mt-3 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
-              />
-            </div>
-            <!-- Platforms -->
-            <div class="space-y-4">
-              <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Competitive Platforms</label>
-              <div class="grid grid-cols-2 gap-2" id="platforms-list">
-                <!-- JS populated -->
-              </div>
-              <input 
-                type="text" 
-                id="custom-platform"
-                placeholder="Add platforms separated by comma (e.g. Netflix, Disney, Paramount+)"
-                class="w-full mt-3 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500"
-            </div>
+          <!-- Date -->
+          <div class="space-y-3">
+            <label class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center gap-2">
+              Snapshot Date <span class="w-1 h-1 rounded-full bg-purple-500"></span>
+            </label>
+            <input type="date" id="date" onchange="updateSummary()" class="w-full bg-brand-black border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-500 transition-colors">
           </div>
         </div>
 
-        <!-- Right Column: CTA -->
-        <div class="lg:col-span-4 flex flex-col justify-end border-t lg:border-t-0 lg:border-l border-white/5 pt-8 lg:pt-0 lg:pl-8">
-          <div class="bg-blue-500/5 rounded-2xl p-5 mb-6 border border-blue-500/10">
-            <h4 class="text-sm font-semibold text-blue-400 mb-2">Request Summary</h4>
+        <!-- Multi-selectors -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Countries -->
+          <div class="space-y-3">
+            <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Target Countries</label>
+            <div class="grid grid-cols-2 gap-2" id="countries-list">
+              <!-- JS populated -->
+            </div>
+            <input
+              type="text"
+              id="custom-country"
+              placeholder="Add more, e.g. Uruguay, Mexico"
+              oninput="updateSummary()"
+              class="w-full mt-1 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-600"
+            />
+          </div>
+          <!-- Platforms -->
+          <div class="space-y-3">
+            <label class="text-xs font-bold uppercase tracking-widest text-gray-500">Competitive Platforms</label>
+            <div class="grid grid-cols-2 gap-2" id="platforms-list">
+              <!-- JS populated -->
+            </div>
+            <input
+              type="text"
+              id="custom-platform"
+              placeholder="Add more, e.g. Paramount+, Crunchyroll"
+              oninput="updateSummary()"
+              class="w-full mt-1 bg-brand-black border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-600"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: CTA -->
+      <div class="lg:col-span-4 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/5 pt-8 lg:pt-0 lg:pl-8 gap-4">
+        <div>
+          <div class="bg-blue-500/5 rounded-2xl p-5 mb-4 border border-blue-500/10">
+            <h4 class="text-sm font-semibold text-blue-400 mb-2 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              Request Summary
+            </h4>
             <p id="summary-text" class="text-xs text-gray-400 leading-relaxed">
-              Select parameters to see intelligence scan details.
+              Select at least one country and one platform.
             </p>
           </div>
-          <button id="run-btn" class="btn-gradient w-full py-4 rounded-2xl font-bold text-white shadow-lg flex items-center justify-center gap-3">
-            <span>Run Intelligence Scan</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
+          <!-- Competitive radar mode -->
+          <div class="bg-purple-500/5 rounded-2xl p-4 border border-purple-500/10">
+            <label class="flex items-center justify-between cursor-pointer">
+              <span class="text-xs text-purple-300 font-semibold">Radar Mode</span>
+              <span class="text-[10px] text-gray-500">Show visual radar</span>
+            </label>
+            <label class="flex items-center gap-3 mt-2 cursor-pointer">
+              <div class="relative">
+                <input type="checkbox" id="radar-toggle" class="sr-only" onchange="toggleRadar()">
+                <div id="radar-track" class="w-9 h-5 rounded-full bg-white/10 transition-colors"></div>
+                <div id="radar-thumb" class="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-gray-400 transition-transform"></div>
+              </div>
+              <span class="text-xs text-gray-400" id="radar-label">Off</span>
+            </label>
+          </div>
         </div>
+
+        <button id="run-btn" class="btn-gradient w-full py-4 rounded-2xl font-bold text-white shadow-lg flex items-center justify-center gap-3" disabled>
+          <span id="run-btn-text">Run Intelligence Scan</span>
+          <svg id="run-btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Results Section -->
-    <div id="results-wrapper" class="hidden space-y-6">
-      <div class="flex items-center justify-between">
-        <h3 class="text-xl font-bold flex items-center gap-3">
-          Intelligence Outputs
-          <span id="job-counter" class="bg-blue-500/10 text-blue-400 text-xs py-1 px-3 rounded-full border border-blue-500/20">0/0</span>
-        </h3>
+  <!-- ── Results Section ── -->
+  <div id="results-wrapper" class="hidden space-y-6">
+    <div class="flex items-center justify-between flex-wrap gap-3">
+      <h3 class="text-xl font-bold flex items-center gap-3">
+        Intelligence Outputs
+        <span id="job-counter" class="bg-blue-500/10 text-blue-400 text-xs py-1 px-3 rounded-full border border-blue-500/20">0 / 0</span>
+        <span id="live-badge" class="hidden live-badge bg-red-500/10 text-red-400 text-[10px] font-bold py-1 px-2 rounded-full border border-red-500/20">● LIVE</span>
+      </h3>
+      <div class="flex items-center gap-3">
+        <button id="export-csv-btn" onclick="exportCSV()" class="hidden text-xs bg-green-500/10 hover:bg-green-500/15 text-green-400 border border-green-500/20 px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
         <button onclick="clearResults()" class="text-xs text-gray-500 hover:text-white transition-colors">Clear all</button>
       </div>
-      <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Results append here -->
-      </div>
     </div>
 
-    <!-- API Documentation -->
-    <section class="mt-20 pt-16 border-t border-white/5">
-      <div class="max-w-4xl mx-auto">
-        <h2 class="text-2xl font-bold mb-2">API Usage & Integration</h2>
-        <p class="text-gray-400 mb-8 font-light">Direct programmatic access to the pricing intelligence engine.</p>
-        
-        <div class="space-y-6">
-          <!-- Endpoint Info -->
-          <div class="glass rounded-2xl p-6">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-              <div>
-                <span class="bg-green-500/10 text-green-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded mb-2 inline-block border border-green-500/20">POST</span>
-                <code class="block text-sm text-blue-300 break-all font-mono">https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/</code>
-              </div>
-              <button onclick="copyText('https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/')" class="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-              </button>
+    <!-- Latency chart -->
+    <div id="chart-wrapper" class="hidden glass rounded-2xl p-5">
+      <p class="text-xs font-bold text-gray-500 uppercase mb-3">Response Latency (seconds)</p>
+      <div id="latency-chart" class="flex items-end gap-2 h-20 overflow-x-auto custom-scrollbar"></div>
+    </div>
+
+    <!-- Radar chart -->
+    <div id="radar-wrapper" class="hidden glass rounded-2xl p-5">
+      <p class="text-xs font-bold text-gray-500 uppercase mb-3">Competitive Radar</p>
+      <div id="radar-container" class="flex flex-wrap gap-6 justify-center"></div>
+    </div>
+
+    <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Results appended here -->
+    </div>
+  </div>
+
+  <!-- ── API Documentation ── -->
+  <section class="mt-20 pt-16 border-t border-white/5">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold mb-2">API Usage & Integration</h2>
+      <p class="text-gray-400 mb-8 font-light">Direct programmatic access to the pricing intelligence engine.</p>
+
+      <div class="space-y-6">
+        <!-- Endpoint Info -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="bg-green-500/10 text-green-400 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded mb-2 inline-block border border-green-500/20">POST</span>
+              <code id="endpoint-display" class="block text-sm text-blue-300 break-all font-mono">https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/</code>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-2">
-                <p class="text-[11px] font-bold text-gray-500 uppercase">Schema</p>
-                <ul class="text-xs space-y-2 text-gray-400">
-                  <li><code class="text-blue-400">modelo</code> <span class="opacity-50">string</span> - "perplexity", "claude", "gemini"</li>
-                  <li><code class="text-blue-400">pais</code> <span class="opacity-50">string</span> - Target country</li>
-                  <li><code class="text-blue-400">plataforma</code> <span class="opacity-50">string</span> - Streaming platform</li>
-                  <li><code class="text-blue-400">fecha</code> <span class="opacity-50">string</span> - Format: DD/MM/YYYY</li>
-                </ul>
-              </div>
-            </div>
+            <button onclick="copyText('https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/')" class="bg-white/5 hover:bg-white/10 p-2 rounded-lg transition-colors tooltip" data-tip="Copy endpoint">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
           </div>
 
-          <!-- Code Samples -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- cURL -->
-            <div class="glass rounded-2xl p-5 overflow-hidden">
-              <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">cURL Request</p>
-              <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">curl -X POST [ENDPOINT] -H "Content-Type: application/json" -d '{
-  "modelo":"perplexity",
-  "pais":"Argentina",
-  "plataforma":"Netflix",
-  "fecha":"24/02/2026"
-}'</pre>
+            <div class="space-y-2">
+              <p class="text-[11px] font-bold text-gray-500 uppercase">Request Schema</p>
+              <ul class="text-xs space-y-2 text-gray-400">
+                <li><code class="text-blue-400">modelo</code> <span class="opacity-50">string</span> — "perplexity" | "claude" | "gemini"</li>
+                <li><code class="text-blue-400">pais</code> <span class="opacity-50">string</span> — Target country</li>
+                <li><code class="text-blue-400">plataforma</code> <span class="opacity-50">string</span> — Streaming platform</li>
+                <li><code class="text-blue-400">fecha</code> <span class="opacity-50">string</span> — Format: DD/MM/YYYY</li>
+              </ul>
             </div>
-            <!-- Python -->
-            <div class="glass rounded-2xl p-5 overflow-hidden">
-              <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">Python (Requests)</p>
-              <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">import requests
+            <div class="space-y-2">
+              <p class="text-[11px] font-bold text-gray-500 uppercase">Response Shape</p>
+              <ul class="text-xs space-y-2 text-gray-400">
+                <li><code class="text-green-400">modelo</code> — model identifier</li>
+                <li><code class="text-green-400">pais / plataforma / moneda</code></li>
+                <li><code class="text-green-400">noticias[]</code> — news items with plans</li>
+                <li><code class="text-green-400">tiempo</code> — execution time (s)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
+        <!-- Code Samples -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="glass rounded-2xl p-5 overflow-hidden">
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">cURL</p>
+            <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">curl -X POST \
+  https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "modelo":"perplexity",
+    "pais":"Argentina",
+    "plataforma":"Netflix",
+    "fecha":"24/02/2026"
+  }'</pre>
+          </div>
+          <div class="glass rounded-2xl p-5 overflow-hidden">
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">Python (requests)</p>
+            <pre class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto">import requests
+
+url = "https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/"
 res = requests.post(url, json={
     "modelo": "perplexity",
-    "pais": "Brazil",
+    "pais":   "Brazil",
     "plataforma": "Disney+",
-    "fecha": "24/02/2026"
+    "fecha":  "24/02/2026"
 })
 print(res.json())</pre>
-            </div>
           </div>
         </div>
       </div>
-    </section>
-  </main>
-
-  <footer class="py-12 border-t border-white/5 text-center">
-    <div class="opacity-40 hover:opacity-100 transition-opacity">
-      <img src="https://framerusercontent.com/assets/YhHtO4AfpyCgmWFZ6i3dcmRLcAI.png" alt="Fabric" class="h-4 mx-auto mb-3 grayscale">
-      <p class="text-[10px] uppercase tracking-[0.2em] font-medium">Powered by Fabric AI Intelligence Engine</p>
     </div>
-  </footer>
+  </section>
+</main>
 
-  <script>
-    const API_URL = 'https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/';
-    
-    const COUNTRIES = ["Argentina", "Brazil", "Chile", "Spain", "United States"];
-    const PLATFORMS = ["Netflix", "Disney+", "Amazon Prime Video", "Max", "Apple TV+"];
+<footer class="py-12 border-t border-white/5 text-center">
+  <div class="opacity-40 hover:opacity-100 transition-opacity">
+    <img src="https://framerusercontent.com/assets/YhHtO4AfpyCgmWFZ6i3dcmRLcAI.png" alt="Fabric" class="h-4 mx-auto mb-3 grayscale">
+    <p class="text-[10px] uppercase tracking-[0.2em] font-medium">Powered by Fabric AI Intelligence Engine</p>
+  </div>
+</footer>
 
-    const countriesList = document.getElementById('countries-list');
-    const platformsList = document.getElementById('platforms-list');
-    const runBtn = document.getElementById('run-btn');
-    const resultsContainer = document.getElementById('results-container');
-    const resultsWrapper = document.getElementById('results-wrapper');
-    const dateInput = document.getElementById('date');
-    const modelSelect = document.getElementById('model');
-    const summaryText = document.getElementById('summary-text');
-    const jobCounter = document.getElementById('job-counter');
+<!-- ──────────────────────────── JavaScript ──────────────────────────── -->
+<script>
+'use strict';
 
-    // Init
-    window.onload = () => {
-      // Set default date to today
-      const today = new Date();
-      dateInput.value = today.toISOString().split('T')[0];
+// ── Constants ──────────────────────────────────────────────────────────────
+const API_URL   = 'https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/';
+const LS_KEY    = 'fabricai_last_query';
 
-      // Populate Countries
-      COUNTRIES.forEach(c => {
-        countriesList.innerHTML += createCheckbox(c, 'country');
-      });
+const COUNTRIES = ['Argentina', 'Brazil', 'Chile', 'Spain', 'United States'];
+const PLATFORMS = ['Netflix', 'Disney+', 'Amazon Prime Video', 'Max', 'Apple TV+'];
 
-      // Populate Platforms
-      PLATFORMS.forEach(p => {
-        platformsList.innerHTML += createCheckbox(p, 'platform');
-      });
+// ── DOM Refs ───────────────────────────────────────────────────────────────
+const countriesList   = document.getElementById('countries-list');
+const platformsList   = document.getElementById('platforms-list');
+const runBtn          = document.getElementById('run-btn');
+const runBtnText      = document.getElementById('run-btn-text');
+const runBtnIcon      = document.getElementById('run-btn-icon');
+const resultsContainer = document.getElementById('results-container');
+const resultsWrapper  = document.getElementById('results-wrapper');
+const dateInput       = document.getElementById('date');
+const modelSelect     = document.getElementById('model');
+const summaryText     = document.getElementById('summary-text');
+const jobCounter      = document.getElementById('job-counter');
+const chartWrapper    = document.getElementById('chart-wrapper');
+const latencyChart    = document.getElementById('latency-chart');
+const radarWrapper    = document.getElementById('radar-wrapper');
+const radarContainer  = document.getElementById('radar-container');
+const exportBtn       = document.getElementById('export-csv-btn');
+const liveBadge       = document.getElementById('live-badge');
+const shareToast      = document.getElementById('share-toast');
 
-      updateSummary();
-    };
+// ── State ──────────────────────────────────────────────────────────────────
+let completedJobs = 0;
+let totalJobs     = 0;
+let resultStore   = [];      // [{task, data, time, isError}]
+let latencyData   = [];      // [{label, time}]
+let monitorActive = false;
+let monitorTimer  = null;
+let autoRefresh   = false;
+let autoRefreshTimer = null;
+let radarMode     = false;
 
-    function createCheckbox(label, type) {
-      return `
-        <label class="checkbox-card cursor-pointer group">
-          <input type="checkbox" name="${type}" value="${label}" class="hidden" onchange="updateSummary()">
-          <div class="border border-white/5 bg-white/[0.02] rounded-xl px-3 py-2 text-xs group-hover:border-white/20 transition-all">
-            ${label}
-          </div>
-        </label>
-      `;
+// ── Initialisation ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function () {
+  setDefaultDate();
+  populateCheckboxes();
+  restoreFromURL();
+  restoreFromLocalStorage();
+  updateSummary();
+  checkEndpointHealth();
+  runBtn.addEventListener('click', runIntelligenceScan);
+});
+
+function setDefaultDate() {
+  const today = new Date();
+  dateInput.value = today.toISOString().split('T')[0];
+}
+
+function populateCheckboxes() {
+  COUNTRIES.forEach(function (c) {
+    countriesList.insertAdjacentHTML('beforeend', createCheckbox(c, 'country'));
+  });
+  PLATFORMS.forEach(function (p) {
+    platformsList.insertAdjacentHTML('beforeend', createCheckbox(p, 'platform'));
+  });
+}
+
+function createCheckbox(label, type) {
+  return '<label class="checkbox-card cursor-pointer group">' +
+    '<input type="checkbox" name="' + type + '" value="' + label +
+    '" class="hidden" onchange="updateSummary()">' +
+    '<div class="border border-white/5 bg-white/[0.02] rounded-xl px-3 py-2 text-xs group-hover:border-white/15">' +
+    label +
+    '</div>' +
+    '</label>';
+}
+
+// ── Summary ────────────────────────────────────────────────────────────────
+function updateSummary() {
+  var checkedCountries  = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(function(i){ return i.value; });
+  var checkedPlatforms  = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function(i){ return i.value; });
+  var manualCountries   = parseCSV(document.getElementById('custom-country').value);
+  var manualPlatforms   = parseCSV(document.getElementById('custom-platform').value);
+
+  var allCountries  = dedup(checkedCountries.concat(manualCountries));
+  var allPlatforms  = dedup(checkedPlatforms.concat(manualPlatforms));
+  var total         = allCountries.length * allPlatforms.length;
+
+  if (total > 0) {
+    summaryText.textContent =
+      'This will execute ' + total + ' request(s) using ' +
+      modelSelect.options[modelSelect.selectedIndex].text +
+      ' across ' + allCountries.length + ' countr' + (allCountries.length === 1 ? 'y' : 'ies') +
+      ' × ' + allPlatforms.length + ' platform' + (allPlatforms.length === 1 ? '' : 's') + '.';
+  } else {
+    summaryText.textContent = 'Select at least one country and one platform to proceed.';
+  }
+
+  runBtn.disabled = total === 0;
+}
+
+// ── Core scan ──────────────────────────────────────────────────────────────
+async function runIntelligenceScan() {
+  var selectedModel = modelSelect.value;
+
+  var checkedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(function(i){ return i.value; });
+  var checkedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function(i){ return i.value; });
+  var manualCountries  = parseCSV(document.getElementById('custom-country').value);
+  var manualPlatforms  = parseCSV(document.getElementById('custom-platform').value);
+
+  var allCountries = dedup(checkedCountries.concat(manualCountries));
+  var allPlatforms = dedup(checkedPlatforms.concat(manualPlatforms));
+
+  if (allCountries.length === 0 || allPlatforms.length === 0) {
+    summaryText.textContent = '⚠ Select at least one country and one platform.';
+    return;
+  }
+
+  var rawDate = dateInput.value;
+  if (!rawDate) {
+    summaryText.textContent = '⚠ Please select a snapshot date.';
+    return;
+  }
+  var formattedDate = rawDate.split('-').reverse().join('/');  // YYYY-MM-DD → DD/MM/YYYY
+
+  // ── Save to localStorage ──
+  saveToLocalStorage({ model: selectedModel, countries: allCountries, platforms: allPlatforms, date: rawDate });
+
+  // ── Reset state ──
+  resultStore  = [];
+  latencyData  = [];
+  completedJobs = 0;
+  resultsContainer.innerHTML = '';
+  latencyChart.innerHTML     = '';
+  radarContainer.innerHTML   = '';
+
+  resultsWrapper.classList.remove('hidden');
+  chartWrapper.classList.remove('hidden');
+  exportBtn.classList.remove('hidden');
+  if (radarMode) radarWrapper.classList.remove('hidden');
+
+  setRunning(true);
+
+  // ── Build task list ──
+  var tasks = [];
+  allCountries.forEach(function (country) {
+    allPlatforms.forEach(function (platform) {
+      tasks.push({ model: selectedModel, country: country, platform: platform, date: formattedDate });
+    });
+  });
+
+  totalJobs = tasks.length;
+  jobCounter.textContent = '0 / ' + totalJobs;
+
+  // ── Execute all in parallel ──
+  await Promise.all(tasks.map(function (t) { return processTask(t); }));
+
+  setRunning(false);
+
+  // ── Post-run ──
+  renderLatencyChart();
+  if (radarMode) renderRadarCharts();
+  if (autoRefresh) scheduleAutoRefresh();
+}
+
+async function processTask(task) {
+  var id = 'res-' + Math.random().toString(36).substr(2, 9);
+  renderPlaceholder(id, task);
+
+  var startTime = performance.now();
+  var data, isError, duration;
+
+  try {
+    var response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        modelo:     task.model,
+        pais:       task.country,
+        plataforma: task.platform,
+        fecha:      task.date
+      })
+    });
+
+    // Handle non-2xx HTTP errors
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status + ' — ' + response.statusText);
     }
-    
-    function updateSummary() {
-    
-      let c = document.querySelectorAll('input[name="country"]:checked').length;
-      let p = document.querySelectorAll('input[name="platform"]:checked').length;
-    
-      const manualCountries = document.getElementById("custom-country").value
-        .split(",")
-        .map(x => x.trim())
-        .filter(x => x.length > 0);
-    
-      const manualPlatforms = document.getElementById("custom-platform").value
-        .split(",")
-        .map(x => x.trim())
-        .filter(x => x.length > 0);
-    
-      c += manualCountries.length;
-      p += manualPlatforms.length;
-    
-      const total = c * p;
-    
-      summaryText.innerText = total > 0 
-        ? `This will execute ${total} separate request(s) using ${modelSelect.value} for the selected combinations.`
-        : "Select at least one country and one platform to proceed.";
-    
-      runBtn.disabled = total === 0;
-      runBtn.style.opacity = total === 0 ? '0.5' : '1';
+
+    var raw = await response.json();
+
+    // Handle Lambda envelope: {statusCode, body} or plain object
+    if (raw && typeof raw.body !== 'undefined') {
+      data = (typeof raw.body === 'string') ? JSON.parse(raw.body) : raw.body;
+    } else {
+      data = raw;
     }
 
-    async function runIntelligenceScan() {
-      const selectedModel = modelSelect.value;
-      let selectedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(i => i.value);
-      let selectedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(i => i.value);
-      // manual countries
-      const manualCountries = document.getElementById("custom-country").value
-        .split(",")
-        .map(x => x.trim())
-        .filter(x => x.length > 0);
-      
-      // manual platforms
-      const manualPlatforms = document.getElementById("custom-platform").value
-        .split(",")
-        .map(x => x.trim())
-        .filter(x => x.length > 0);
-      
-      // merge
-      selectedCountries = [...selectedCountries, ...manualCountries];
-      selectedPlatforms = [...selectedPlatforms, ...manualPlatforms];
-      
-      // remove duplicates
-      selectedCountries = [...new Set(selectedCountries)];
-      selectedPlatforms = [...new Set(selectedPlatforms)];
-      
-      const rawDate = dateInput.value;
-      const formattedDate = rawDate.split('-').reverse().join('/');
+    duration = ((performance.now() - startTime) / 1000).toFixed(2);
+    isError  = false;
 
-      resultsWrapper.classList.remove('hidden');
-      runBtn.disabled = true;
-      runBtn.innerHTML = `<span class="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></span> Processing Tasks...`;
+  } catch (err) {
+    var msg = err.message || 'Unknown error';
+    if (msg === 'Failed to fetch' || msg.toLowerCase().includes('networkerror') || msg.toLowerCase().includes('load failed')) {
+      msg = 'CORS blocked or Lambda unreachable. Check Lambda Function URL CORS settings: AllowOrigins=*, AllowMethods=POST,OPTIONS, AllowHeaders=content-type.';
+    }
+    data     = { error: msg };
+    duration = ((performance.now() - startTime) / 1000).toFixed(2);
+    isError  = true;
+  }
 
-      const tasks = [];
-      selectedCountries.forEach(country => {
-        selectedPlatforms.forEach(platform => {
-          tasks.push({ model: selectedModel, country, platform, date: formattedDate });
-        });
-      });
+  completedJobs++;
+  jobCounter.textContent = completedJobs + ' / ' + totalJobs;
 
-      let completed = 0;
-      jobCounter.innerText = `0 / ${tasks.length}`;
+  updateResult(id, task, data, parseFloat(duration), isError);
+  resultStore.push({ task: task, data: data, time: parseFloat(duration), isError: isError });
+  latencyData.push({ label: task.platform + ' / ' + task.country, time: parseFloat(duration) });
+}
 
-      const processTask = async (task) => {
-        const id = 'res-' + Math.random().toString(36).substr(2, 9);
-        renderPlaceholder(id, task);
-        
-        const startTime = performance.now();
-        try {
-          const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              modelo: task.model,
-              pais: task.country,
-              plataforma: task.platform,
-              fecha: task.date
-            })
-          });
+// ── Render helpers ─────────────────────────────────────────────────────────
+function renderPlaceholder(id, task) {
+  var html = '<div id="' + id + '" class="result-card glass glass-hover rounded-2xl p-5 flex flex-col gap-3">' +
+    '<div class="flex justify-between items-start">' +
+      '<div>' +
+        '<h4 class="text-sm font-bold text-white">' + esc(task.platform) + ' — ' + esc(task.country) + '</h4>' +
+        '<p class="text-[10px] text-gray-500 uppercase tracking-tighter mt-0.5">' + esc(task.model) + ' | ' + esc(task.date) + '</p>' +
+      '</div>' +
+      '<div class="dot-loader flex gap-1 pt-1"><span></span><span></span><span></span></div>' +
+    '</div>' +
+    '<div class="h-28 w-full loading-shimmer rounded-xl"></div>' +
+  '</div>';
+  resultsContainer.insertAdjacentHTML('afterbegin', html);
+}
 
-          const raw = await response.json();
-          const data = raw.body ? (typeof raw.body === "string" ? JSON.parse(raw.body) : raw.body) : raw;
-          const duration = ((performance.now() - startTime) / 1000).toFixed(2);
-          updateResult(id, data, duration, false);
-        }catch (error) {
-            let msg = error.message;
-            if(msg === "Failed to fetch"){
-              msg = "CORS blocked or Lambda not reachable from browser";
-            }
-            updateResult(id, { error: msg }, 0, true);
-          } 
-        } finally {
-          completed++;
-          jobCounter.innerText = `${completed} / ${tasks.length}`;
+function updateResult(id, task, data, time, isError) {
+  var el = document.getElementById(id);
+  if (!el) return;
+
+  var titleText = esc(task.platform) + ' — ' + esc(task.country);
+  var metaText  = esc(task.model) + ' | ' + esc(task.date);
+  var timeLabel = time > 0 ? time + 's' : '';
+  var safeJSON  = JSON.stringify(data, null, 2);
+
+  // Build copy button with data attribute instead of inline onclick with embedded JSON
+  var copyBtnId = 'copy-' + id;
+
+  var html =
+    '<div class="flex justify-between items-start mb-3">' +
+      '<div>' +
+        '<h4 class="text-sm font-bold ' + (isError ? 'text-red-400' : 'text-white') + '">' + titleText + '</h4>' +
+        '<div class="flex items-center gap-2 mt-1">' +
+          '<span class="text-[10px] text-gray-500 uppercase">' + metaText + '</span>' +
+          (timeLabel ? '<span class="text-[10px] font-mono ' + latencyColor(time) + '">' + timeLabel + '</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<button id="' + copyBtnId + '" class="p-2 hover:bg-white/5 rounded-lg transition-all tooltip" data-tip="Copy JSON">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>' +
+      '</button>' +
+    '</div>' +
+    '<div class="relative">' +
+      '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-64 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>' + syntaxHighlight(safeJSON) + '</code></pre>' +
+    '</div>';
+
+  el.innerHTML = html;
+  if (isError) {
+    el.classList.add('border-red-500/20', 'bg-red-500/[0.02]');
+  }
+
+  // Attach copy handler safely via dataset
+  var copyBtn = document.getElementById(copyBtnId);
+  if (copyBtn) {
+    copyBtn._jsonData = safeJSON;
+    copyBtn.addEventListener('click', function () {
+      copyToClipboard(copyBtn, copyBtn._jsonData);
+    });
+  }
+}
+
+function latencyColor(t) {
+  if (t <= 10)  return 'text-green-400/80';
+  if (t <= 20)  return 'text-yellow-400/80';
+  return 'text-red-400/80';
+}
+
+// ── Latency chart ──────────────────────────────────────────────────────────
+function renderLatencyChart() {
+  if (latencyData.length === 0) return;
+  var max = Math.max.apply(null, latencyData.map(function(d){ return d.time; }));
+  latencyChart.innerHTML = '';
+  latencyData.forEach(function (d) {
+    var pct = max > 0 ? (d.time / max) * 100 : 0;
+    var color = d.time <= 10 ? '#4ade80' : d.time <= 20 ? '#fbbf24' : '#f87171';
+    var bar = document.createElement('div');
+    bar.className = 'flex flex-col items-center gap-1 min-w-[40px]';
+    bar.innerHTML =
+      '<span class="text-[9px] font-mono" style="color:' + color + '">' + d.time + 's</span>' +
+      '<div style="height:' + pct + '%;min-height:4px;width:20px;background:' + color + ';border-radius:4px 4px 0 0;opacity:0.8"></div>' +
+      '<span class="text-[8px] text-gray-600 text-center leading-tight" style="max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + esc(d.label) + '">' + esc(d.label) + '</span>';
+    latencyChart.appendChild(bar);
+  });
+}
+
+// ── Competitive radar ──────────────────────────────────────────────────────
+function renderRadarCharts() {
+  radarContainer.innerHTML = '';
+  // Group by country
+  var byCountry = {};
+  resultStore.forEach(function (r) {
+    if (r.isError) return;
+    var c = r.task.country;
+    if (!byCountry[c]) byCountry[c] = [];
+    byCountry[c].push(r);
+  });
+
+  Object.keys(byCountry).forEach(function (country) {
+    var results = byCountry[country];
+    var platforms = results.map(function(r){ return r.task.platform; });
+    var times     = results.map(function(r){ return r.time; });
+    var maxT      = Math.max.apply(null, times) || 1;
+    var N         = platforms.length;
+    if (N < 2) return; // radar needs at least 2 axes
+
+    var size = 120;
+    var cx = size / 2, cy = size / 2, radius = 45;
+
+    // Build polygon points
+    var polyPts = [];
+    var axisPts = [];
+    for (var i = 0; i < N; i++) {
+      var angle = (Math.PI * 2 / N) * i - Math.PI / 2;
+      var r = radius * (times[i] / maxT);
+      polyPts.push((cx + r * Math.cos(angle)).toFixed(1) + ',' + (cy + r * Math.sin(angle)).toFixed(1));
+      axisPts.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle), label: platforms[i] });
+    }
+
+    var svgLines = axisPts.map(function(p){
+      return '<line x1="' + cx + '" y1="' + cy + '" x2="' + p.x.toFixed(1) + '" y2="' + p.y.toFixed(1) + '" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>';
+    }).join('');
+    var svgLabels = axisPts.map(function(p){
+      return '<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" text-anchor="middle" dominant-baseline="middle">' + esc(p.label) + '</text>';
+    }).join('');
+
+    var svgHtml =
+      '<svg width="' + size + '" height="' + size + '" class="radar-svg overflow-visible">' +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + radius + '" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>' +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + (radius*0.5).toFixed(0) + '" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>' +
+        svgLines +
+        '<polygon points="' + polyPts.join(' ') + '" fill="rgba(59,130,246,0.2)" stroke="#3b82f6" stroke-width="1.5"/>' +
+        svgLabels +
+      '</svg>';
+
+    var card = document.createElement('div');
+    card.className = 'flex flex-col items-center gap-2';
+    card.innerHTML = svgHtml + '<p class="text-[10px] text-gray-500">' + esc(country) + ' — latency</p>';
+    radarContainer.appendChild(card);
+  });
+}
+
+function toggleRadar() {
+  radarMode = document.getElementById('radar-toggle').checked;
+  document.getElementById('radar-track').style.background = radarMode ? '#8b5cf6' : '';
+  document.getElementById('radar-thumb').style.transform  = radarMode ? 'translateX(16px)' : '';
+  document.getElementById('radar-label').textContent       = radarMode ? 'On' : 'Off';
+  if (radarMode && resultStore.length > 0) {
+    radarWrapper.classList.remove('hidden');
+    renderRadarCharts();
+  } else {
+    radarWrapper.classList.add('hidden');
+  }
+}
+
+// ── Export CSV ─────────────────────────────────────────────────────────────
+function exportCSV() {
+  if (resultStore.length === 0) return;
+
+  var rows = [['model','country','platform','date','time_s','currency','noticias_count','error']];
+  resultStore.forEach(function (r) {
+    var d = r.data;
+    rows.push([
+      csvCell(r.task.model),
+      csvCell(r.task.country),
+      csvCell(r.task.platform),
+      csvCell(r.task.date),
+      r.time,
+      csvCell(d.moneda || ''),
+      d.noticias ? d.noticias.length : 0,
+      csvCell(d.error || '')
+    ]);
+  });
+
+  var csv = rows.map(function(r){ return r.join(','); }).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = 'price-intelligence-' + new Date().toISOString().split('T')[0] + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(v) {
+  if (v == null) return '';
+  return '"' + String(v).replace(/"/g, '""') + '"';
+}
+
+// ── localStorage ───────────────────────────────────────────────────────────
+function saveToLocalStorage(state) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+function restoreFromLocalStorage() {
+  try {
+    var saved = localStorage.getItem(LS_KEY);
+    if (!saved) return;
+    var s = JSON.parse(saved);
+    // model
+    if (s.model) modelSelect.value = s.model;
+    // date
+    if (s.date) dateInput.value = s.date;
+    // countries
+    if (s.countries) {
+      s.countries.forEach(function (c) {
+        var cb = document.querySelector('input[name="country"][value="' + c + '"]');
+        if (cb) cb.checked = true;
+        else {
+          var custom = document.getElementById('custom-country');
+          custom.value = custom.value ? custom.value + ', ' + c : c;
         }
-      };
-
-      // Run in parallel
-      await Promise.all(tasks.map(t => processTask(t)));
-
-      runBtn.disabled = false;
-      runBtn.innerHTML = `<span>Run Intelligence Scan</span><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`;
+      });
     }
-
-    function renderPlaceholder(id, task) {
-      const html = `
-        <div id="${id}" class="glass rounded-2xl p-5 border-white/10 flex flex-col gap-3">
-          <div class="flex justify-between items-start">
-            <div>
-              <h4 class="text-sm font-bold text-white">${task.platform} — ${task.country}</h4>
-              <p class="text-[10px] text-gray-500 uppercase tracking-tighter">${task.model} | ${task.date}</p>
-            </div>
-            <div class="flex gap-2">
-              <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-            </div>
-          </div>
-          <div class="h-32 w-full loading-shimmer rounded-xl opacity-20"></div>
-        </div>
-      `;
-      resultsContainer.insertAdjacentHTML('afterbegin', html);
+    // platforms
+    if (s.platforms) {
+      s.platforms.forEach(function (p) {
+        var cb = document.querySelector('input[name="platform"][value="' + p + '"]');
+        if (cb) cb.checked = true;
+        else {
+          var custom = document.getElementById('custom-platform');
+          custom.value = custom.value ? custom.value + ', ' + p : p;
+        }
+      });
     }
+  } catch (e) {}
+}
 
-    function updateResult(id, data, time, isError) {
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      const jsonStr = JSON.stringify(data, null, 2);
-      
-      el.innerHTML = `
-        <div class="flex justify-between items-start mb-3">
-          <div>
-            <h4 class="text-sm font-bold ${isError ? 'text-red-400' : 'text-white'}">${el.querySelector('h4').innerText}</h4>
-            <div class="flex items-center gap-2 mt-1">
-               <span class="text-[10px] text-gray-500 uppercase">${el.querySelector('p').innerText}</span>
-               <span class="text-[10px] text-green-500/80 font-mono">${time > 0 ? time + 's' : ''}</span>
-            </div>
-          </div>
-          <button onclick="copyToClipboard(this, \`${jsonStr.replace(/`/g, '\`')}\`)" class="p-2 hover:bg-white/5 rounded-lg transition-all" title="Copy JSON">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-          </button>
-        </div>
-        <div class="relative group">
-          <pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-60 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>${syntaxHighlight(data)}</code></pre>
-        </div>
-      `;
-      
-      if(isError) el.classList.add('border-red-500/20', 'bg-red-500/[0.02]');
+// ── URL share ──────────────────────────────────────────────────────────────
+function restoreFromURL() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('model'))     modelSelect.value = params.get('model');
+    if (params.get('date'))      dateInput.value   = params.get('date');
+    if (params.get('countries')) {
+      parseCSV(params.get('countries')).forEach(function (c) {
+        var cb = document.querySelector('input[name="country"][value="' + c + '"]');
+        if (cb) cb.checked = true;
+        else {
+          var el = document.getElementById('custom-country');
+          el.value = el.value ? el.value + ', ' + c : c;
+        }
+      });
     }
+    if (params.get('platforms')) {
+      parseCSV(params.get('platforms')).forEach(function (p) {
+        var cb = document.querySelector('input[name="platform"][value="' + p + '"]');
+        if (cb) cb.checked = true;
+        else {
+          var el = document.getElementById('custom-platform');
+          el.value = el.value ? el.value + ', ' + p : p;
+        }
+      });
+    }
+  } catch (e) {}
+}
 
-    function syntaxHighlight(json) {
-      if (typeof json != 'string') {
-        json = JSON.stringify(json, undefined, 2);
+function shareURL() {
+  var checkedCountries = Array.from(document.querySelectorAll('input[name="country"]:checked')).map(function(i){ return i.value; });
+  var checkedPlatforms = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function(i){ return i.value; });
+  var manualCountries  = parseCSV(document.getElementById('custom-country').value);
+  var manualPlatforms  = parseCSV(document.getElementById('custom-platform').value);
+
+  var allC = dedup(checkedCountries.concat(manualCountries));
+  var allP = dedup(checkedPlatforms.concat(manualPlatforms));
+
+  var params = new URLSearchParams({
+    model:     modelSelect.value,
+    date:      dateInput.value,
+    countries: allC.join(','),
+    platforms: allP.join(',')
+  });
+
+  var shareLink = window.location.origin + window.location.pathname + '?' + params.toString();
+  navigator.clipboard.writeText(shareLink).then(function () {
+    showToast('🔗 Link copied to clipboard');
+  }).catch(function () {
+    showToast('📋 ' + shareLink);
+  });
+}
+
+function showToast(msg) {
+  shareToast.textContent = msg;
+  shareToast.classList.remove('hidden');
+  shareToast.style.opacity = '1';
+  setTimeout(function () {
+    shareToast.style.opacity = '0';
+    setTimeout(function () { shareToast.classList.add('hidden'); }, 400);
+  }, 2800);
+}
+
+// ── Endpoint health check ──────────────────────────────────────────────────
+function checkEndpointHealth() {
+  var dot   = document.getElementById('health-dot');
+  var label = document.getElementById('health-label');
+
+  // Use OPTIONS preflight as health ping (lightweight)
+  var controller = new AbortController();
+  var timeout    = setTimeout(function () { controller.abort(); }, 6000);
+
+  fetch(API_URL, { method: 'OPTIONS', signal: controller.signal })
+    .then(function (r) {
+      clearTimeout(timeout);
+      dot.className   = 'w-2 h-2 rounded-full health-dot-ok';
+      label.textContent = 'Endpoint reachable';
+    })
+    .catch(function (e) {
+      clearTimeout(timeout);
+      if (e.name === 'AbortError') {
+        dot.className   = 'w-2 h-2 rounded-full health-dot-err';
+        label.textContent = 'Endpoint timeout';
+      } else {
+        // CORS preflight rejection still means the server responded
+        dot.className   = 'w-2 h-2 rounded-full health-dot-ok';
+        label.textContent = 'Endpoint reachable (CORS restricted)';
       }
-      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      return json.replace(/("(\u[a-zA-Z0-9]{4}|\[^u]|[^\"])*"(\s*:)?|(true|false|null)|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'json-number';
-        if (/^"/.test(match)) {
-          if (/:$/.test(match)) {
-            cls = 'json-key';
-          } else {
-            cls = 'json-string';
-          }
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
-      });
-    }
+    });
+}
 
-    function copyToClipboard(btn, text) {
-      navigator.clipboard.writeText(text);
-      const original = btn.innerHTML;
-      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-      setTimeout(() => btn.innerHTML = original, 2000);
-    }
+// ── Live monitor ───────────────────────────────────────────────────────────
+function toggleMonitor() {
+  monitorActive = !monitorActive;
+  var dot   = document.getElementById('monitor-dot');
+  var label = document.getElementById('monitor-label');
+  if (monitorActive) {
+    dot.className    = 'w-2 h-2 rounded-full bg-red-500 live-badge';
+    label.textContent = 'Live Monitor: ON';
+    liveBadge.classList.remove('hidden');
+    monitorTimer = setInterval(checkEndpointHealth, 30000);
+  } else {
+    dot.className    = 'w-2 h-2 rounded-full bg-gray-600';
+    label.textContent = 'Live Monitor: OFF';
+    liveBadge.classList.add('hidden');
+    clearInterval(monitorTimer);
+  }
+}
 
-    function copyText(text) {
-      navigator.clipboard.writeText(text);
-    }
+// ── Auto-refresh ───────────────────────────────────────────────────────────
+function toggleAutoRefresh() {
+  autoRefresh = !autoRefresh;
+  var label = document.getElementById('autorefresh-label');
+  if (autoRefresh) {
+    label.textContent = 'Auto-refresh: ON (60s)';
+    scheduleAutoRefresh();
+  } else {
+    label.textContent = 'Auto-refresh: OFF';
+    clearTimeout(autoRefreshTimer);
+  }
+}
 
-    function clearResults() {
-      resultsContainer.innerHTML = '';
-      resultsWrapper.classList.add('hidden');
-      jobCounter.innerText = '0/0';
-    }
+function scheduleAutoRefresh() {
+  clearTimeout(autoRefreshTimer);
+  autoRefreshTimer = setTimeout(function () {
+    if (autoRefresh) runIntelligenceScan();
+  }, 60000);
+}
 
-    runBtn.addEventListener('click', runIntelligenceScan);
-  </script>
+// ── UI helpers ─────────────────────────────────────────────────────────────
+function setRunning(running) {
+  runBtn.disabled = running;
+  if (running) {
+    runBtnText.textContent = 'Processing…';
+    runBtnIcon.outerHTML =
+      '<span id="run-btn-icon" class="dot-loader flex gap-1">' +
+      '<span></span><span></span><span></span></span>';
+  } else {
+    runBtnText.textContent = 'Run Intelligence Scan';
+    var icon = document.getElementById('run-btn-icon');
+    if (icon) {
+      icon.outerHTML =
+        '<svg id="run-btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+    }
+    runBtn.disabled = false;
+    updateSummary(); // re-evaluate disabled state
+  }
+}
+
+function clearResults() {
+  resultsContainer.innerHTML = '';
+  latencyChart.innerHTML     = '';
+  radarContainer.innerHTML   = '';
+  resultStore  = [];
+  latencyData  = [];
+  resultsWrapper.classList.add('hidden');
+  chartWrapper.classList.add('hidden');
+  radarWrapper.classList.add('hidden');
+  exportBtn.classList.add('hidden');
+  jobCounter.textContent = '0 / 0';
+}
+
+// ── JSON syntax highlight ──────────────────────────────────────────────────
+function syntaxHighlight(jsonStr) {
+  var safe = jsonStr
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  return safe.replace(
+    /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+    function (match) {
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) return '<span class="json-key">' + match + '</span>';
+        return '<span class="json-string">' + match + '</span>';
+      }
+      if (/true|false/.test(match)) return '<span class="json-bool">' + match + '</span>';
+      if (/null/.test(match))       return '<span class="json-null">' + match + '</span>';
+      return '<span class="json-number">' + match + '</span>';
+    }
+  );
+}
+
+// ── Clipboard ─────────────────────────────────────────────────────────────
+function copyToClipboard(btn, text) {
+  navigator.clipboard.writeText(text).then(function () {
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    setTimeout(function () { btn.innerHTML = orig; }, 2000);
+  });
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text);
+}
+
+// ── Utilities ──────────────────────────────────────────────────────────────
+function parseCSV(str) {
+  if (!str) return [];
+  return str.split(',')
+    .map(function (s) { return s.trim(); })
+    .filter(function (s) { return s.length > 0; });
+}
+
+function dedup(arr) {
+  var seen = {};
+  return arr.filter(function (v) {
+    var k = v.toLowerCase();
+    if (seen[k]) return false;
+    seen[k] = true;
+    return true;
+  });
+}
+
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+</script>
 </body>
 </html>
