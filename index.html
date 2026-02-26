@@ -129,6 +129,11 @@
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
     input[type="date"] { color-scheme: dark; }
 
+    /* Collapsible raw output block */
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] > summary { color: #d1d5db; }
+
     /* Toast / modal */
     #share-toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
@@ -337,12 +342,13 @@
             </ul>
           </div>
           <div>
-            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Response fields</p>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Response envelope (always)</p>
             <ul class="space-y-1.5 text-gray-400">
-              <li><code class="text-green-400">modelo</code> · <code class="text-green-400">pais</code> · <code class="text-green-400">plataforma</code> · <code class="text-green-400">moneda</code></li>
-              <li><code class="text-green-400">noticias[]</code> — news items with nested plans</li>
-              <li><code class="text-green-400">tiempo</code> — server-side execution time (s)</li>
-              <li><span class="text-gray-600">May return Lambda envelope:</span> <code class="text-gray-500">&#123;statusCode, body&#125;</code></li>
+              <li><span class="text-gray-600">HTTP is always</span> <code class="text-yellow-400">200</code> — check inner <code class="text-yellow-400">statusCode</code></li>
+              <li><code class="text-green-400">statusCode</code> <code class="text-gray-600">200</code> — <code class="text-green-400">body</code> is an <strong>object</strong>: <code class="text-green-400">modelo · pais · plataforma · moneda · noticias[] · tiempo</code></li>
+              <li><code class="text-red-400">statusCode</code> <code class="text-gray-600">400|500</code> — <code class="text-red-400">body</code> is a JSON string: <code class="text-gray-400">&#123;"error":"…"&#125;</code></li>
+              <li><code class="text-green-400">noticias[].noticia_planes[]</code> — nested plan details</li>
+              <li><code class="text-green-400">tiempo</code> — model-side execution time (s), not network</li>
             </ul>
           </div>
         </div>
@@ -368,12 +374,13 @@
 
       <!-- Backend recommendations note -->
       <div class="glass rounded-2xl p-5 border-l-2 border-yellow-500/40">
-        <p class="text-[11px] font-bold text-yellow-400/80 uppercase mb-2">Backend changes recommended</p>
+        <p class="text-[11px] font-bold text-yellow-400/80 uppercase mb-2">Backend notes (app/main.py)</p>
         <ul class="text-xs text-gray-500 space-y-1 list-disc list-inside">
+          <li>Lambda Function URL always returns HTTP 200 — inner <code class="text-gray-400">statusCode</code> field carries 400/500 for errors; this frontend reads both correctly</li>
+          <li>On success: <code class="text-gray-400">body</code> is a Python dict (serialized as a JSON object). On error: <code class="text-gray-400">body</code> is a JSON string produced by <code class="text-gray-400">json.dumps()</code></li>
+          <li>Gemini returns <code class="text-gray-400">&#123;"error":"…","raw":"…"&#125;</code> when no JSON found in model output — <code class="text-gray-400">raw</code> contains the original model text; frontend surfaces it as collapsible block</li>
           <li>Configure Lambda Function URL CORS: <code class="text-gray-400">AllowOrigins=*</code>, <code class="text-gray-400">AllowMethods=POST,OPTIONS</code>, <code class="text-gray-400">AllowHeaders=content-type</code></li>
-          <li>Gemini handler should enforce a hard timeout (e.g. 60s) server-side to prevent Lambda execution runaway</li>
-          <li>All handlers should return consistent JSON — avoid plain-text error responses</li>
-          <li>Consider returning HTTP 4xx/5xx status codes for errors instead of 200 with an error field</li>
+          <li>Gemini handler: add server-side timeout guard to prevent Lambda execution runaway beyond the 90s client-side abort</li>
         </ul>
       </div>
     </div>
@@ -732,12 +739,28 @@ async function processTask(task) {
     rawText = await response.text();
 
     if (!response.ok) {
+      // Non-200 HTTP — Lambda URL itself rejected (rare; usually CORS/infra)
       status = 'error';
       parsed = { error: 'HTTP ' + response.status + ' — ' + response.statusText, detail: rawText.slice(0, 500) };
     } else {
+      // Lambda Function URL ALWAYS returns HTTP 200.
+      // Inner statusCode (400/500) lives inside the JSON body:
+      //   { "statusCode": 400, "body": "{\"error\":\"...\"}" }   ← errors (body is a JSON string)
+      //   { "statusCode": 200, "body": { modelo, pais, ... } }  ← success (body is an object)
+      // safeParseResponse unwraps the envelope, so we must peek at statusCode BEFORE unwrapping.
+      var innerCode = 200;
+      try {
+        var raw2 = JSON.parse(rawText);
+        if (raw2 && typeof raw2.statusCode === 'number') { innerCode = raw2.statusCode; }
+      } catch (_) {}
+
       parsed = safeParseResponse(rawText);
       if (parsed && parsed.__parseError) {
         status = 'ok'; // got something, just couldn't parse as JSON
+      }
+      if (innerCode >= 400) {
+        status = 'error';
+        // parsed is now the unwrapped body — e.g. { error: "Faltan parámetros...", missing: [...] }
       }
     }
 
@@ -884,12 +907,17 @@ function renderResult(cardId, record) {
   var isPlain   = parsed && parsed.__isPlainText;
   var isParseErr = parsed && parsed.__parseError;
 
+  // Use server-returned modelo label if available (e.g. "Gemini (ALT)", "Claude & Tavily")
+  var modelLabel = (parsed && !isPlain && !isParseErr && !isError && parsed.modelo)
+    ? parsed.modelo
+    : task.model;
+
   var timeLabel = time > 0 ? time + 's' : '';
 
-  // Badge
+  // Badge — base class by model key, label from server response when available
   var badgeHtml =
     '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border model-badge-' + esc(task.model) + '">' +
-    esc(task.model) + '</span>';
+    esc(modelLabel) + '</span>';
 
   // Status chip
   var statusChip = '';
@@ -914,9 +942,29 @@ function renderResult(cardId, record) {
     var displayText = isPlain ? (parsed.text || '') : ((parsed && parsed.error) ? parsed.error : rawText);
     preHtml = '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300 whitespace-pre-wrap break-words">' + esc(displayText) + '</pre>';
   } else {
-    // JSON display
-    var jsonStr = JSON.stringify(parsed, null, 2);
+    // JSON display — sanitize internal flags before rendering
+    var displayObj = parsed;
+    if (displayObj) {
+      displayObj = JSON.parse(JSON.stringify(displayObj)); // clone
+      delete displayObj.__isPlainText;
+      delete displayObj.__parseError;
+    }
+    var jsonStr = JSON.stringify(displayObj, null, 2);
     preHtml = '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>' + syntaxHighlight(jsonStr) + '</code></pre>';
+
+    // If Gemini returned { error: "...", raw: "..." }, append the raw text in a collapsible block
+    if (parsed && parsed.error && parsed.raw) {
+      preHtml +=
+        '<details class="mt-2">' +
+          '<summary class="text-[10px] text-gray-500 cursor-pointer select-none hover:text-gray-300 transition-colors">▸ raw model output (' + parsed.raw.length + ' chars)</summary>' +
+          '<pre class="text-[10px] font-mono bg-black/50 p-3 rounded-xl max-h-40 overflow-y-auto custom-scrollbar border border-white/5 text-gray-400 whitespace-pre-wrap break-words mt-1">' + esc(parsed.raw) + '</pre>' +
+        '</details>';
+    }
+    // If error has 'missing' fields (validation error from Lambda), list them
+    if (parsed && parsed.error && Array.isArray(parsed.missing) && parsed.missing.length > 0) {
+      preHtml +=
+        '<p class="text-[10px] text-red-400/80 mt-1">Missing fields: ' + esc(parsed.missing.join(', ')) + '</p>';
+    }
   }
 
   var html =
@@ -978,7 +1026,7 @@ function exportCSV() {
   resultStore.forEach(function (r) {
     var d  = r.parsed;
     var isPlain = d && d.__isPlainText;
-    var hasJson = !isPlain && !r.parsed.__parseError && r.status !== 'error' && r.status !== 'timeout';
+    var hasJson = !isPlain && !(d && d.__parseError) && r.status !== 'error' && r.status !== 'timeout';
     var currency = (hasJson && d && d.moneda) ? d.moneda : '';
     var noticiasCt = (hasJson && d && d.noticias) ? d.noticias.length : '';
     var errMsg = '';
