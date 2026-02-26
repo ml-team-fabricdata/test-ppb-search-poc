@@ -371,18 +371,6 @@
           <pre id="python-example" class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar"></pre>
         </div>
       </div>
-
-      <!-- Backend recommendations note -->
-      <div class="glass rounded-2xl p-5 border-l-2 border-yellow-500/40">
-        <p class="text-[11px] font-bold text-yellow-400/80 uppercase mb-2">Backend notes (app/main.py)</p>
-        <ul class="text-xs text-gray-500 space-y-1 list-disc list-inside">
-          <li>Lambda Function URL always returns HTTP 200 — inner <code class="text-gray-400">statusCode</code> field carries 400/500 for errors; this frontend reads both correctly</li>
-          <li>On success: <code class="text-gray-400">body</code> is a Python dict (serialized as a JSON object). On error: <code class="text-gray-400">body</code> is a JSON string produced by <code class="text-gray-400">json.dumps()</code></li>
-          <li>Gemini returns <code class="text-gray-400">&#123;"error":"…","raw":"…"&#125;</code> when no JSON found in model output — <code class="text-gray-400">raw</code> contains the original model text; frontend surfaces it as collapsible block</li>
-          <li>Configure Lambda Function URL CORS: <code class="text-gray-400">AllowOrigins=*</code>, <code class="text-gray-400">AllowMethods=POST,OPTIONS</code>, <code class="text-gray-400">AllowHeaders=content-type</code></li>
-          <li>Gemini handler: add server-side timeout guard to prevent Lambda execution runaway beyond the 90s client-side abort</li>
-        </ul>
-      </div>
     </div>
   </section>
 </main>
