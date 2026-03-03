@@ -310,6 +310,19 @@
     <div id="results-container" class="space-y-6">
       <!-- Groups appended here -->
     </div>
+
+    <!-- Consolidated analytical table -->
+    <div id="analytics-section" class="hidden glass rounded-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <p class="text-xs font-bold text-gray-500 uppercase">Analytical View</p>
+        <button id="toggle-analytics-btn" class="text-xs bg-blue-500/10 hover:bg-blue-500/15 text-blue-300 border border-blue-500/20 px-4 py-2 rounded-xl transition-colors">
+          [ Show Analytical Table ]
+        </button>
+      </div>
+      <div id="analytics-table-wrapper" class="hidden overflow-x-auto custom-scrollbar border border-white/5 rounded-xl">
+        <div id="analytics-table-container" class="min-w-max"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ── API Reference ── -->
@@ -441,8 +454,8 @@ var CONCURRENCY     = 4;     // max simultaneous Lambda calls
   label/sub are UI-only; payloads always use the raw `value` key.
 */
 var MODELS = [
-  { value: 'perplexity',           label: 'Perplexity',          sub: 'Real-time Search'     },
-  { value: 'perplexity_with_date', label: 'Perplexity V2', sub: 'Date-filtered Search' },
+  { value: 'perplexity',           label: 'Sonar',          sub: 'Real-time Search'     },
+  { value: 'perplexity_with_date', label: 'Sonar Temporal', sub: 'Date-filtered Search' },
   { value: 'claude',               label: 'Claude',          sub: '+ Tavily'             },
   { value: 'gemini',               label: 'Gemini',          sub: 'Google Search'        }
 ];
@@ -459,8 +472,8 @@ var MODEL_ORDER = { perplexity: 0, perplexity_with_date: 1, claude: 2, gemini: 3
   Only the visible badge text, chart label, and summary use these names.
 */
 var MODEL_DISPLAY_NAMES = {
-  perplexity:           'Perplexity',
-  perplexity_with_date: 'Perplexity V2',
+  perplexity:           'Sonar',
+  perplexity_with_date: 'Sonar Temporal',
   claude:               'Claude',
   gemini:               'Gemini'
 };
@@ -491,12 +504,17 @@ var payloadModal        = document.getElementById('payload-modal');
 var payloadModalContent = document.getElementById('payload-modal-content');
 var payloadModalCopy    = document.getElementById('payload-modal-copy');
 var payloadModalClose   = document.getElementById('payload-modal-close');
+var analyticsSection    = document.getElementById('analytics-section');
+var toggleAnalyticsBtn  = document.getElementById('toggle-analytics-btn');
+var analyticsWrapper    = document.getElementById('analytics-table-wrapper');
+var analyticsContainer  = document.getElementById('analytics-table-container');
 
 /* ─────────────────── State ─────────────────── */
 var completedJobs = 0;
 var totalJobs     = 0;
 var resultStore   = []; // { task, parsed, rawText, status, time }
 var latencyData   = []; // { label, time, model }
+var activeRunId   = 0;
 
 /* ─────────────────── Boot ─────────────────── */
 document.addEventListener('DOMContentLoaded', function () {
@@ -512,6 +530,7 @@ document.addEventListener('DOMContentLoaded', function () {
   shareBtn.addEventListener('click', sharePayloads);
   exportBtn.addEventListener('click', exportCSV);
   clearBtn.addEventListener('click', clearResults);
+  toggleAnalyticsBtn.addEventListener('click', toggleAnalyticalTable);
 
   payloadModalClose.addEventListener('click', function () { payloadModal.classList.add('hidden'); });
   payloadModalCopy.addEventListener('click', function () {
@@ -720,18 +739,33 @@ function runWithConcurrency(tasks, limit, worker) {
 
     if (total === 0) { resolve(); return; }
 
+    function markDoneAndContinue() {
+      done++;
+      if (done >= total) {
+        resolve();
+        return;
+      }
+      startNext(); // free slot — pull next from queue
+    }
+
     function startNext() {
       if (started >= total) return;
       var task = tasks[started++];
-      worker(task)
+      var settled = false;
+      var watchdog = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        markDoneAndContinue();
+      }, TASK_TIMEOUT_MS + 5000); // prevents zombie workers from blocking completion
+
+      Promise.resolve()
+        .then(function () { return worker(task); })
         .catch(function () {}) // swallow unexpected rejection — processTask handles its own errors
         .then(function () {
-          done++;
-          if (done === total) {
-            resolve();
-          } else {
-            startNext(); // free slot — pull next from queue
-          }
+          if (settled) return;
+          settled = true;
+          clearTimeout(watchdog);
+          markDoneAndContinue();
         });
     }
 
@@ -764,11 +798,14 @@ async function runIntelligenceScan() {
   });
 
   // Reset UI
+  activeRunId++;
+  var runId = activeRunId;
   resultStore   = [];
   latencyData   = [];
   completedJobs = 0;
   resultsContainer.innerHTML = '';
   latencyChart.innerHTML     = '';
+  resetAnalyticalTable();
 
   resultsWrapper.classList.remove('hidden');
   chartWrapper.classList.add('hidden');
@@ -784,10 +821,19 @@ async function runIntelligenceScan() {
   renderGroupPlaceholders(groups);
 
   // Execute with concurrency cap — max CONCURRENCY requests in flight at once
-  await runWithConcurrency(tasks, CONCURRENCY, processTask);
+  try {
+    await runWithConcurrency(tasks, CONCURRENCY, function (task) {
+      return processTask(task, runId);
+    });
+  } catch (_) {
+    // runWithConcurrency is designed to resolve; this keeps UI usable on unexpected failures.
+  }
+
+  if (runId !== activeRunId) return;
 
   setRunning(false);
   renderLatencyChart();
+  renderAnalyticalTable();
   chartWrapper.classList.remove('hidden');
   exportBtn.classList.remove('hidden');
 }
