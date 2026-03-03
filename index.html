@@ -441,8 +441,8 @@ var CONCURRENCY     = 4;     // max simultaneous Lambda calls
   label/sub are UI-only; payloads always use the raw `value` key.
 */
 var MODELS = [
-  { value: 'perplexity',           label: 'Sonar',          sub: 'Real-time Search'     },
-  { value: 'perplexity_with_date', label: 'Sonar Temporal', sub: 'Date-filtered Search' },
+  { value: 'perplexity',           label: 'Perplexity',          sub: 'Real-time Search'     },
+  { value: 'perplexity_with_date', label: 'Perplexity V2', sub: 'Date-filtered Search' },
   { value: 'claude',               label: 'Claude',          sub: '+ Tavily'             },
   { value: 'gemini',               label: 'Gemini',          sub: 'Google Search'        }
 ];
@@ -459,8 +459,8 @@ var MODEL_ORDER = { perplexity: 0, perplexity_with_date: 1, claude: 2, gemini: 3
   Only the visible badge text, chart label, and summary use these names.
 */
 var MODEL_DISPLAY_NAMES = {
-  perplexity:           'Sonar',
-  perplexity_with_date: 'Sonar Temporal',
+  perplexity:           'Perplexity',
+  perplexity_with_date: 'Perplexity V2',
   claude:               'Claude',
   gemini:               'Gemini'
 };
