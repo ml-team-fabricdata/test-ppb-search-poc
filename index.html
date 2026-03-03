@@ -112,9 +112,10 @@
     .result-card { animation: card-in 0.25s ease-out; }
 
     /* Model badge chips on result cards */
-    .model-badge-perplexity { background: rgba(16,185,129,0.12); color: #6ee7b7; border-color: rgba(16,185,129,0.25); }
-    .model-badge-claude     { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.25); }
-    .model-badge-gemini     { background: rgba(139,92,246,0.12); color: #c4b5fd; border-color: rgba(139,92,246,0.25); }
+    .model-badge-perplexity           { background: rgba(16,185,129,0.12); color: #6ee7b7; border-color: rgba(16,185,129,0.25); }
+    .model-badge-perplexity_with_date { background: rgba(16,185,129,0.12); color: #6ee7b7; border-color: rgba(16,185,129,0.25); }
+    .model-badge-claude               { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.25); }
+    .model-badge-gemini               { background: rgba(139,92,246,0.12); color: #c4b5fd; border-color: rgba(139,92,246,0.25); }
 
     /* Tooltip */
     .tooltip { position: relative; }
@@ -129,12 +130,12 @@
     input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
     input[type="date"] { color-scheme: dark; }
 
-    /* Collapsible raw output block */
+    /* Collapsible raw output */
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     details[open] > summary { color: #d1d5db; }
 
-    /* Toast / modal */
+    /* Toast */
     #share-toast {
       position: fixed; bottom: 24px; right: 24px; z-index: 200;
       background: #1f2937; border: 1px solid rgba(255,255,255,0.1);
@@ -266,7 +267,7 @@
         <!-- Action buttons -->
         <div class="space-y-3">
           <!-- Share payloads button -->
-          <button id="share-btn" class="w-full py-2.5 rounded-xl text-xs font-semibold border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] text-gray-300 transition-colors flex items-center justify-center gap-2">
+          <button id="share-btn" class="w-full py-2.5 rounded-xl text-xs font-semibold border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] text-gray-300 transition-colors flex items-center justify-center gap-2" disabled>
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
             Copy POST Payload(s)
           </button>
@@ -316,7 +317,7 @@
     <div class="max-w-4xl mx-auto space-y-6">
       <div>
         <h2 class="text-lg font-bold text-white mb-1">API Reference</h2>
-        <p class="text-xs text-gray-500">Lambda Function URL — direct POST, no auth.</p>
+        <p class="text-xs text-gray-500">Lambda Function URL — direct POST, no auth required.</p>
       </div>
 
       <!-- Endpoint row -->
@@ -330,25 +331,26 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
           </button>
         </div>
+
         <!-- Schema -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
           <div>
             <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Request body (JSON)</p>
             <ul class="space-y-1.5 text-gray-400">
-              <li><code class="text-blue-400">modelo</code> <span class="text-gray-600">string</span> &nbsp;— <code class="text-gray-400">"perplexity" | "claude" | "gemini"</code></li>
-              <li><code class="text-blue-400">pais</code> <span class="text-gray-600">string</span> &nbsp;— target country name</li>
-              <li><code class="text-blue-400">plataforma</code> <span class="text-gray-600">string</span> &nbsp;— platform name</li>
-              <li><code class="text-blue-400">fecha</code> <span class="text-gray-600">string</span> &nbsp;— <code class="text-gray-400">DD/MM/YYYY</code></li>
+              <li><code class="text-blue-400">modelo</code> <span class="text-gray-600">string</span> — <code class="text-gray-400">"perplexity" | "perplexity_with_date" | "claude" | "gemini"</code></li>
+              <li><code class="text-blue-400">pais</code> <span class="text-gray-600">string</span> — target country name</li>
+              <li><code class="text-blue-400">plataforma</code> <span class="text-gray-600">string</span> — platform name</li>
+              <li><code class="text-blue-400">fecha</code> <span class="text-gray-600">string</span> — <code class="text-gray-400">DD/MM/YYYY</code></li>
             </ul>
           </div>
           <div>
-            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Response envelope (always)</p>
+            <p class="text-[10px] font-bold text-gray-500 uppercase mb-2">Response envelope (always present)</p>
             <ul class="space-y-1.5 text-gray-400">
-              <li><span class="text-gray-600">HTTP is always</span> <code class="text-yellow-400">200</code> — check inner <code class="text-yellow-400">statusCode</code></li>
-              <li><code class="text-green-400">statusCode</code> <code class="text-gray-600">200</code> — <code class="text-green-400">body</code> is an <strong>object</strong>: <code class="text-green-400">modelo · pais · plataforma · moneda · noticias[] · tiempo</code></li>
-              <li><code class="text-red-400">statusCode</code> <code class="text-gray-600">400|500</code> — <code class="text-red-400">body</code> is a JSON string: <code class="text-gray-400">&#123;"error":"…"&#125;</code></li>
-              <li><code class="text-green-400">noticias[].noticia_planes[]</code> — nested plan details</li>
-              <li><code class="text-green-400">tiempo</code> — model-side execution time (s), not network</li>
+              <li><span class="text-gray-500">HTTP status is always</span> <code class="text-yellow-400">200</code> — check inner <code class="text-yellow-400">statusCode</code></li>
+              <li><code class="text-green-400">statusCode 200</code> → <code class="text-green-400">body</code> is a JSON <strong>object</strong>: <code class="text-green-400">modelo · pais · plataforma · moneda · noticias[] · tiempo</code></li>
+              <li><code class="text-red-400">statusCode 400|500</code> → <code class="text-red-400">body</code> is a JSON string: <code class="text-gray-400">{"error":"…"}</code></li>
+              <li><code class="text-green-400">noticias[].noticia_planes[]</code> — nested plan details per news item</li>
+              <li><code class="text-green-400">tiempo</code> — model-side execution time in seconds (not network)</li>
             </ul>
           </div>
         </div>
@@ -361,15 +363,56 @@
             <p class="text-[10px] font-bold text-gray-500 uppercase">cURL example</p>
             <span id="curl-note" class="text-[10px] text-gray-600"></span>
           </div>
-          <pre id="curl-example" class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar"></pre>
+          <pre id="curl-example" class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar leading-relaxed"></pre>
         </div>
         <div class="glass rounded-2xl p-5 overflow-hidden">
           <div class="flex items-center justify-between mb-3">
             <p class="text-[10px] font-bold text-gray-500 uppercase">Python example</p>
             <span id="python-note" class="text-[10px] text-gray-600"></span>
           </div>
-          <pre id="python-example" class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar"></pre>
+          <pre id="python-example" class="text-[11px] text-gray-300 font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar leading-relaxed"></pre>
         </div>
+      </div>
+
+      <!-- Example response -->
+      <div class="glass rounded-2xl p-5 overflow-hidden">
+        <p class="text-[10px] font-bold text-gray-500 uppercase mb-3">Example success response (statusCode 200)</p>
+        <pre class="text-[11px] font-mono bg-black/40 p-4 rounded-xl overflow-x-auto custom-scrollbar text-gray-300 leading-relaxed">{
+  "statusCode": 200,
+  "body": {
+    "modelo": "Perplexity",
+    "pais": "Argentina",
+    "plataforma": "Netflix",
+    "moneda": "ARS",
+    "noticias": [
+      {
+        "noticia_url": "https://...",
+        "noticia_title": "Netflix sube precios en Argentina",
+        "noticia_paises_afectados": ["Argentina"],
+        "noticia_categoria": "Price Change",
+        "noticia_fecha": "2026-02-24",
+        "noticia_resumen": "Netflix anunció aumentos...",
+        "noticia_planes": [
+          { "plan_nombre": "Estándar", "plan_periodo": "Mensual", "plan_precio": 2490.0, "plan_incluye_impuestos": true, "plan_detalles": "..." }
+        ]
+      }
+    ],
+    "tiempo": 4.82
+  }
+}</pre>
+      </div>
+
+      <!-- Backend notes -->
+      <div class="glass rounded-2xl p-5 border-l-2 border-yellow-500/40">
+        <p class="text-[11px] font-bold text-yellow-400/80 uppercase mb-2">Backend notes (app/main.py)</p>
+        <ul class="text-xs text-gray-500 space-y-1 list-disc list-inside">
+          <li>Lambda Function URL always returns HTTP 200 — inner <code class="text-gray-400">statusCode</code> carries 400/500 for errors; this frontend reads both correctly</li>
+          <li>Success: <code class="text-gray-400">body</code> is a Python dict → JSON object. Error: <code class="text-gray-400">body</code> is <code class="text-gray-400">json.dumps({"error":"..."})</code> → JSON string</li>
+          <li>Gemini failure path returns <code class="text-gray-400">{"error":"No se encontró un JSON válido","raw":"&lt;model text&gt;"}</code> — frontend shows <code class="text-gray-400">raw</code> in a collapsible block</li>
+          <li>Gemini ALT key path appends <code class="text-gray-400">" (ALT)"</code> to <code class="text-gray-400">modelo</code> — result badge uses server-returned label</li>
+          <li>CORS: configure Lambda Function URL with <code class="text-gray-400">AllowOrigins=*</code>, <code class="text-gray-400">AllowMethods=POST,OPTIONS</code>, <code class="text-gray-400">AllowHeaders=content-type</code></li>
+          <li>Gemini: add server-side timeout to prevent Lambda execution runaway beyond the 90s client-side abort</li>
+        </ul>
       </div>
     </div>
   </section>
@@ -387,34 +430,64 @@
 'use strict';
 
 /* ─────────────────── Constants ─────────────────── */
-var API_URL  = 'https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/';
-var LS_KEY   = 'fabricai_last_query_v2';
+var API_URL         = 'https://rrrhzpi6zybrpvhf3ppzsrna4u0sxurp.lambda-url.us-east-1.on.aws/';
+var LS_KEY          = 'fabricai_last_query_v2';
 var TASK_TIMEOUT_MS = 90000; // 90 s per request
+var CONCURRENCY     = 4;     // max simultaneous Lambda calls
 
+/*
+  MODELS — order here defines the UI checkbox rendering order.
+  Canonical display order: perplexity → perplexity_with_date → claude → gemini.
+  label/sub are UI-only; payloads always use the raw `value` key.
+*/
 var MODELS = [
-  { value: 'perplexity', label: 'Perplexity',          sub: 'Real-time Search' },
-  { value: 'claude',     label: 'Claude 3.5 Sonnet',   sub: '+ Tavily'         },
-  { value: 'gemini',     label: 'Gemini 2.5 Flash',    sub: 'Google Search'    }
+  { value: 'perplexity',           label: 'Sonar',          sub: 'Real-time Search'     },
+  { value: 'perplexity_with_date', label: 'Sonar Temporal', sub: 'Date-filtered Search' },
+  { value: 'claude',               label: 'Claude',          sub: '+ Tavily'             },
+  { value: 'gemini',               label: 'Gemini',          sub: 'Google Search'        }
 ];
+
+/*
+  Canonical model display order inside every group.
+  Cards always render in this order regardless of selection order or response timing.
+*/
+var MODEL_ORDER = { perplexity: 0, perplexity_with_date: 1, claude: 2, gemini: 3 };
+
+/*
+  UI display names — keyed by raw model value.
+  Payloads, CSV, and Share always use the raw value key (task.model).
+  Only the visible badge text, chart label, and summary use these names.
+*/
+var MODEL_DISPLAY_NAMES = {
+  perplexity:           'Sonar',
+  perplexity_with_date: 'Sonar Temporal',
+  claude:               'Claude',
+  gemini:               'Gemini'
+};
+
+function getDisplayName(modelKey) {
+  return MODEL_DISPLAY_NAMES[modelKey] || modelKey;
+}
+
 var COUNTRIES = ['Argentina', 'Brazil', 'Chile', 'Spain', 'United States'];
 var PLATFORMS = ['Netflix', 'Disney+', 'Amazon Prime Video', 'Max', 'Apple TV+'];
 
 /* ─────────────────── DOM refs ─────────────────── */
-var runBtn          = document.getElementById('run-btn');
-var runBtnText      = document.getElementById('run-btn-text');
-var runBtnIcon      = document.getElementById('run-btn-icon');
-var summaryText     = document.getElementById('summary-text');
-var jobCounter      = document.getElementById('job-counter');
-var resultsWrapper  = document.getElementById('results-wrapper');
-var resultsContainer = document.getElementById('results-container');
-var chartWrapper    = document.getElementById('chart-wrapper');
-var latencyChart    = document.getElementById('latency-chart');
-var exportBtn       = document.getElementById('export-csv-btn');
-var shareBtn        = document.getElementById('share-btn');
-var clearBtn        = document.getElementById('clear-btn');
-var dateInput       = document.getElementById('date');
-var shareToast      = document.getElementById('share-toast');
-var payloadModal    = document.getElementById('payload-modal');
+var runBtn              = document.getElementById('run-btn');
+var runBtnText          = document.getElementById('run-btn-text');
+var runBtnIcon          = document.getElementById('run-btn-icon');
+var summaryText         = document.getElementById('summary-text');
+var jobCounter          = document.getElementById('job-counter');
+var resultsWrapper      = document.getElementById('results-wrapper');
+var resultsContainer    = document.getElementById('results-container');
+var chartWrapper        = document.getElementById('chart-wrapper');
+var latencyChart        = document.getElementById('latency-chart');
+var exportBtn           = document.getElementById('export-csv-btn');
+var shareBtn            = document.getElementById('share-btn');
+var clearBtn            = document.getElementById('clear-btn');
+var dateInput           = document.getElementById('date');
+var shareToast          = document.getElementById('share-toast');
+var payloadModal        = document.getElementById('payload-modal');
 var payloadModalContent = document.getElementById('payload-modal-content');
 var payloadModalCopy    = document.getElementById('payload-modal-copy');
 var payloadModalClose   = document.getElementById('payload-modal-close');
@@ -434,10 +507,12 @@ document.addEventListener('DOMContentLoaded', function () {
   restoreFromLocalStorage();
   updateSummary();
   updateApiExamples();
+
   runBtn.addEventListener('click', runIntelligenceScan);
   shareBtn.addEventListener('click', sharePayloads);
   exportBtn.addEventListener('click', exportCSV);
   clearBtn.addEventListener('click', clearResults);
+
   payloadModalClose.addEventListener('click', function () { payloadModal.classList.add('hidden'); });
   payloadModalCopy.addEventListener('click', function () {
     var txt = payloadModalContent.textContent;
@@ -445,8 +520,11 @@ document.addEventListener('DOMContentLoaded', function () {
       showToast('Copied to clipboard');
     }).catch(function () {});
   });
+
   document.getElementById('copy-endpoint-btn').addEventListener('click', function () {
-    navigator.clipboard.writeText(API_URL).then(function () { showToast('Endpoint URL copied'); }).catch(function(){});
+    navigator.clipboard.writeText(API_URL)
+      .then(function () { showToast('Endpoint URL copied'); })
+      .catch(function () {});
   });
 });
 
@@ -489,7 +567,6 @@ function getSelectedPlatforms() {
   var cb = Array.from(document.querySelectorAll('input[name="platform"]:checked')).map(function (i) { return i.value; });
   return dedup(cb.concat(parseCSV(document.getElementById('custom-platform').value)));
 }
-
 function getFormattedDate() {
   var v = dateInput.value;
   if (!v) return '';
@@ -497,15 +574,29 @@ function getFormattedDate() {
 }
 
 /* ─────────────────── Build task list ─────────────────── */
+/*
+  Task shape: { model, country, platform, date }
+  POST payload shape (exact match to main.py): { modelo, pais, plataforma, fecha }
+  Outer iteration: countries → platforms; inner: models sorted by MODEL_ORDER.
+  This guarantees groups pre-render with stable column order.
+*/
 function buildTasks() {
   var models    = getSelectedModels();
   var countries = getSelectedCountries();
   var platforms = getSelectedPlatforms();
   var fecha     = getFormattedDate();
+
+  // Sort selected models by canonical display order before building tasks
+  var sortedModels = models.slice().sort(function (a, b) {
+    var oa = MODEL_ORDER[a] !== undefined ? MODEL_ORDER[a] : 99;
+    var ob = MODEL_ORDER[b] !== undefined ? MODEL_ORDER[b] : 99;
+    return oa - ob;
+  });
+
   var tasks = [];
   countries.forEach(function (country) {
     platforms.forEach(function (platform) {
-      models.forEach(function (model) {
+      sortedModels.forEach(function (model) {
         tasks.push({ model: model, country: country, platform: platform, date: fecha });
       });
     });
@@ -513,7 +604,7 @@ function buildTasks() {
   return tasks;
 }
 
-/* Build POST payload from task (exact shape sent to Lambda) */
+/* Exact POST payload sent to Lambda — always uses raw model key */
 function taskToPayload(task) {
   return { modelo: task.model, pais: task.country, plataforma: task.platform, fecha: task.date };
 }
@@ -545,7 +636,8 @@ function updateSummary() {
     summaryText.textContent = 'Select at least one ' + missing.join(', ') + '.';
   }
 
-  runBtn.disabled = total === 0;
+  var ready = total > 0 && dateInput.value !== '';
+  runBtn.disabled   = !ready;
   shareBtn.disabled = total === 0;
   updateApiExamples();
 }
@@ -557,9 +649,7 @@ function updateApiExamples() {
     ? taskToPayload(tasks[0])
     : { modelo: 'perplexity', pais: 'Argentina', plataforma: 'Netflix', fecha: '24/02/2026' };
 
-  var note = tasks.length > 1
-    ? '(showing 1 of ' + tasks.length + ' payloads)'
-    : '';
+  var note = tasks.length > 1 ? '(showing 1 of ' + tasks.length + ' payloads)' : '';
   document.getElementById('curl-note').textContent   = note;
   document.getElementById('python-note').textContent = note;
 
@@ -573,14 +663,24 @@ function updateApiExamples() {
 
   document.getElementById('python-example').textContent =
     'import requests\n\n' +
-    'res = requests.post(\n' +
+    'r = requests.post(\n' +
     '    "' + API_URL + '",\n' +
     '    json=' + payloadStr.replace(/\n/g, '\n    ') + '\n' +
     ')\n' +
-    'print(res.json())';
+    'envelope = r.json()           # always HTTP 200\n' +
+    'if envelope["statusCode"] == 200:\n' +
+    '    data = envelope["body"]   # dict\n' +
+    'else:\n' +
+    '    import json\n' +
+    '    err = json.loads(envelope["body"])  # string → dict\n' +
+    '    print(err["error"])';
 }
 
 /* ─────────────────── Share payloads ─────────────────── */
+/*
+  Copies exact POST payload(s) as JSON — raw model keys, not display names.
+  Single task → JSON object. Multiple → JSON array.
+*/
 function sharePayloads() {
   var tasks = buildTasks();
   if (tasks.length === 0) { showToast('No tasks selected'); return; }
@@ -591,9 +691,55 @@ function sharePayloads() {
   navigator.clipboard.writeText(text).then(function () {
     showToast('Copied ' + payloads.length + ' payload' + (payloads.length === 1 ? '' : 's') + ' to clipboard');
   }).catch(function () {
-    // Clipboard failed — show modal
     payloadModalContent.textContent = text;
     payloadModal.classList.remove('hidden');
+  });
+}
+
+/* ─────────────────── Concurrency limiter ─────────────────── */
+/*
+  Runs `workers` async tasks at most `limit` at a time.
+  All placeholders are already rendered before this is called.
+  Job counter is updated inside processTask as each completes.
+
+  Algorithm: semaphore counter + recursive drain.
+  - `active` tracks in-flight requests.
+  - `index` is the next task to start (shared via closure array).
+  - When a slot frees, it immediately starts the next queued task.
+  - Resolves when every task has completed.
+
+  STABILITY: worker rejections are caught before the completion counter
+  is updated, so a failed worker never stalls the queue. processTask is
+  designed to never reject, but this guard handles any unexpected throws.
+*/
+function runWithConcurrency(tasks, limit, worker) {
+  return new Promise(function (resolve) {
+    var total   = tasks.length;
+    var started = 0;  // tasks dispatched so far
+    var done    = 0;  // tasks fully completed
+
+    if (total === 0) { resolve(); return; }
+
+    function startNext() {
+      if (started >= total) return;
+      var task = tasks[started++];
+      worker(task)
+        .catch(function () {}) // swallow unexpected rejection — processTask handles its own errors
+        .then(function () {
+          done++;
+          if (done === total) {
+            resolve();
+          } else {
+            startNext(); // free slot — pull next from queue
+          }
+        });
+    }
+
+    // Seed up to `limit` initial workers
+    var seeds = Math.min(limit, total);
+    for (var i = 0; i < seeds; i++) {
+      startNext();
+    }
   });
 }
 
@@ -610,7 +756,6 @@ async function runIntelligenceScan() {
     return;
   }
 
-  // Save state
   saveToLocalStorage({
     models:    getSelectedModels(),
     countries: getSelectedCountries(),
@@ -619,8 +764,8 @@ async function runIntelligenceScan() {
   });
 
   // Reset UI
-  resultStore  = [];
-  latencyData  = [];
+  resultStore   = [];
+  latencyData   = [];
   completedJobs = 0;
   resultsContainer.innerHTML = '';
   latencyChart.innerHTML     = '';
@@ -633,21 +778,27 @@ async function runIntelligenceScan() {
   totalJobs = tasks.length;
   jobCounter.textContent = '0 / ' + totalJobs;
 
-  // Pre-render group placeholders grouped by country+platform
+  // Pre-render ALL group placeholders immediately (before any request fires)
+  // buildGroups uses tasks already sorted by MODEL_ORDER via buildTasks()
   var groups = buildGroups(tasks);
   renderGroupPlaceholders(groups);
 
-  // Execute all in parallel
-  await Promise.all(tasks.map(function (t) { return processTask(t); }));
+  // Execute with concurrency cap — max CONCURRENCY requests in flight at once
+  await runWithConcurrency(tasks, CONCURRENCY, processTask);
 
   setRunning(false);
   renderLatencyChart();
-
   chartWrapper.classList.remove('hidden');
   exportBtn.classList.remove('hidden');
 }
 
-/* Build group map: { "country::platform" : [task, ...] } preserving order */
+/* ─────────────────── Group helpers ─────────────────── */
+/*
+  buildGroups preserves the iteration order from buildTasks(),
+  which already sorted models by MODEL_ORDER.
+  So within each group the task array is always [perplexity, perplexity_with_date, claude, gemini]
+  (for whatever subset was selected), and placeholder columns match exactly.
+*/
 function buildGroups(tasks) {
   var order = [];
   var map   = {};
@@ -659,14 +810,14 @@ function buildGroups(tasks) {
   return { order: order, map: map };
 }
 
-/* Render one group container per country+platform combination */
 function renderGroupPlaceholders(groups) {
   groups.order.forEach(function (key) {
-    var tasks = groups.map[key];
-    var parts = key.split('::');
-    var country  = parts[0];
-    var platform = parts[1];
-    var groupId  = 'group-' + key.replace(/[^a-zA-Z0-9]/g, '_');
+    var groupTasks = groups.map[key];
+    var parts      = key.split('::');
+    var country    = parts[0];
+    var platform   = parts[1];
+    var groupId    = 'group-' + key.replace(/[^a-zA-Z0-9]/g, '_');
+    var cols       = Math.min(groupTasks.length, 3);
 
     var groupHtml =
       '<div id="' + groupId + '" class="glass rounded-2xl p-5 result-card">' +
@@ -675,10 +826,9 @@ function renderGroupPlaceholders(groups) {
           '<span class="text-gray-600">·</span>' +
           '<span class="text-sm text-gray-400">' + esc(country) + '</span>' +
         '</div>' +
-        '<div class="grid grid-cols-1 md:grid-cols-' + Math.min(tasks.length, 3) + ' gap-3" id="' + groupId + '-models">' +
-          tasks.map(function (t) {
-            var cardId = makeCardId(t);
-            return renderModelPlaceholderHTML(cardId, t);
+        '<div class="grid grid-cols-1 md:grid-cols-' + cols + ' gap-3" id="' + groupId + '-models">' +
+          groupTasks.map(function (t) {
+            return renderModelPlaceholderHTML(makeCardId(t), t);
           }).join('') +
         '</div>' +
       '</div>';
@@ -694,16 +844,24 @@ function makeCardId(task) {
 }
 
 function renderModelPlaceholderHTML(cardId, task) {
-  return '<div id="' + cardId + '" class="flex flex-col gap-2">' +
-    '<div class="flex items-center gap-2">' +
-      '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border model-badge-' + esc(task.model) + '">' + esc(task.model) + '</span>' +
-      '<div class="dot-loader flex gap-1"><span></span><span></span><span></span></div>' +
-    '</div>' +
-    '<div class="h-24 loading-shimmer rounded-xl"></div>' +
-  '</div>';
+  // Badge CSS class uses raw model key for styling; text uses display name
+  return (
+    '<div id="' + cardId + '" class="flex flex-col gap-2">' +
+      '<div class="flex items-center gap-2">' +
+        '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border model-badge-' + esc(task.model) + '">' + esc(getDisplayName(task.model)) + '</span>' +
+        '<div class="dot-loader flex gap-1"><span></span><span></span><span></span></div>' +
+      '</div>' +
+      '<div class="h-24 loading-shimmer rounded-xl"></div>' +
+    '</div>'
+  );
 }
 
 /* ─────────────────── Process single task ─────────────────── */
+/*
+  Returns a Promise that resolves when the task is fully done
+  (success, error, or timeout). Never rejects — all errors are
+  caught and surfaced in the result card.
+*/
 async function processTask(task) {
   var cardId    = makeCardId(task);
   var startTime = performance.now();
@@ -723,46 +881,49 @@ async function processTask(task) {
     });
     clearTimeout(timer);
 
-    // Always read as text first — avoids json() throwing on non-JSON
+    // Always read as text first — response.json() throws on non-JSON bodies
     rawText = await response.text();
 
     if (!response.ok) {
-      // Non-200 HTTP — Lambda URL itself rejected (rare; usually CORS/infra)
+      // Lambda URL itself returned non-200 (rare; usually CORS/infra failure)
       status = 'error';
       parsed = { error: 'HTTP ' + response.status + ' — ' + response.statusText, detail: rawText.slice(0, 500) };
     } else {
       // Lambda Function URL ALWAYS returns HTTP 200.
-      // Inner statusCode (400/500) lives inside the JSON body:
-      //   { "statusCode": 400, "body": "{\"error\":\"...\"}" }   ← errors (body is a JSON string)
-      //   { "statusCode": 200, "body": { modelo, pais, ... } }  ← success (body is an object)
-      // safeParseResponse unwraps the envelope, so we must peek at statusCode BEFORE unwrapping.
+      // The real status lives inside the body as { "statusCode": N, "body": ... }
+      //   statusCode 200 → body is a Python dict → JSON object (success)
+      //   statusCode 400|500 → body is json.dumps({"error":"..."}) → JSON string
+      // Peek at statusCode BEFORE safeParseResponse strips the envelope.
       var innerCode = 200;
       try {
-        var raw2 = JSON.parse(rawText);
-        if (raw2 && typeof raw2.statusCode === 'number') { innerCode = raw2.statusCode; }
-      } catch (_) {}
+        var envelope = JSON.parse(rawText);
+        if (envelope && typeof envelope.statusCode === 'number') {
+          innerCode = envelope.statusCode;
+        }
+      } catch (_) { /* not JSON at all — safeParseResponse handles it */ }
 
       parsed = safeParseResponse(rawText);
+
       if (parsed && parsed.__parseError) {
-        status = 'ok'; // got something, just couldn't parse as JSON
+        status = 'ok'; // received something, just can't parse as JSON
       }
       if (innerCode >= 400) {
         status = 'error';
-        // parsed is now the unwrapped body — e.g. { error: "Faltan parámetros...", missing: [...] }
+        // parsed is the unwrapped body, e.g. { error: "...", missing: [...] }
       }
     }
 
   } catch (err) {
     clearTimeout(timer);
-    status = 'error';
     if (err.name === 'AbortError') {
-      status = 'timeout';
-      parsed = { error: 'Request timed out after ' + (TASK_TIMEOUT_MS / 1000) + 's. The model may still be processing server-side.' };
+      status  = 'timeout';
+      parsed  = { error: 'Request timed out after ' + (TASK_TIMEOUT_MS / 1000) + 's. The model may still be processing server-side.' };
       rawText = '';
     } else {
+      status = 'error';
       var msg = err.message || String(err);
       if (msg === 'Failed to fetch' || /network|load failed/i.test(msg)) {
-        msg = 'Network error — check CORS (Lambda Function URL needs AllowOrigins=*, AllowMethods=POST,OPTIONS, AllowHeaders=content-type)';
+        msg = 'Network error — check CORS: Lambda Function URL needs AllowOrigins=*, AllowMethods=POST,OPTIONS, AllowHeaders=content-type';
       }
       parsed  = { error: msg };
       rawText = '';
@@ -781,18 +942,22 @@ async function processTask(task) {
     time:    parseFloat(duration)
   };
   resultStore.push(record);
-  latencyData.push({ label: task.model + ' / ' + task.platform + ' / ' + task.country, time: parseFloat(duration), model: task.model });
+  // Use display name in the latency tooltip label
+  latencyData.push({ label: getDisplayName(task.model) + ' / ' + task.platform + ' / ' + task.country, time: parseFloat(duration), model: task.model });
 
-  renderResult(cardId, record);
+  // Wrap renderResult so an unexpected DOM exception does not propagate
+  // and reject processTask, which would stall runWithConcurrency.
+  try { renderResult(cardId, record); } catch (_) {}
 }
 
 /* ─────────────────── safeParseResponse ─────────────────── */
 /*
   Layered parser — never throws.
-  Returns:
-    - parsed object/array if successful
-    - { __isPlainText: true, text: rawText } if no JSON could be extracted
-    - { __parseError: true, error: msg, text: rawText } on all other cases
+  Layer 1: Direct JSON.parse → unwrap Lambda envelope
+  Layer 2: Fenced ```json...``` block
+  Layer 3: First balanced { } substring
+  Layer 4: First balanced [ ] substring
+  Layer 5: Plain text fallback
 */
 function safeParseResponse(rawText) {
   if (rawText === null || rawText === undefined) {
@@ -800,13 +965,13 @@ function safeParseResponse(rawText) {
   }
   var text = String(rawText).trim();
 
-  // 1. Direct JSON parse
+  // Layer 1: direct JSON parse
   try {
     var direct = JSON.parse(text);
     return unwrapLambdaEnvelope(direct);
   } catch (_) {}
 
-  // 2. Fenced code block  ```json ... ```
+  // Layer 2: fenced code block  ```json ... ```
   var fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   if (fenced) {
     try {
@@ -815,7 +980,7 @@ function safeParseResponse(rawText) {
     } catch (_) {}
   }
 
-  // 3. Extract first balanced { ... } substring
+  // Layer 3: first balanced { } substring
   var extracted = extractFirstJSON(text, '{');
   if (extracted !== null) {
     try {
@@ -824,55 +989,60 @@ function safeParseResponse(rawText) {
     } catch (_) {}
   }
 
-  // 4. Extract first balanced [ ... ] substring
+  // Layer 4: first balanced [ ] substring
   var extractedArr = extractFirstJSON(text, '[');
   if (extractedArr !== null) {
     try {
-      var fromArr = JSON.parse(extractedArr);
-      return fromArr;
+      return JSON.parse(extractedArr);
     } catch (_) {}
   }
 
-  // 5. Give up — return as plain text
+  // Layer 5: plain text
   if (text.length > 0) {
     return { __isPlainText: true, text: text };
   }
   return { __parseError: true, error: 'Empty or unreadable response', text: text };
 }
 
-/* Unwrap { statusCode, body } Lambda envelope if present */
+/*
+  Unwrap Lambda Function URL envelope: { statusCode, body }
+  Success: body is a dict/object or array → return as-is
+  Error:   body is a JSON string (json.dumps output) → parse it
+  If body-string is not valid JSON → wrap as plain text
+*/
 function unwrapLambdaEnvelope(obj) {
   if (obj && typeof obj === 'object' && !Array.isArray(obj) && typeof obj.body !== 'undefined') {
     if (typeof obj.body === 'string') {
+      // Error path: body = json.dumps({"error":"..."})
       try {
         return JSON.parse(obj.body);
       } catch (_) {
-        // body is a string but not JSON — return body as plain text wrapper
         if (obj.body.trim().length > 0) {
           return { __isPlainText: true, text: obj.body };
         }
       }
     } else if (obj.body !== null) {
+      // Success path: body is already a dict or array
       return obj.body;
     }
   }
   return obj;
 }
 
-/* Extract first balanced JSON substring starting with `open` char */
+/* Extract first balanced JSON substring starting with `open` char ({ or [) */
 function extractFirstJSON(text, open) {
   var close = open === '{' ? '}' : ']';
   var start = text.indexOf(open);
   if (start === -1) return null;
-  var depth = 0;
+  var depth  = 0;
   var inStr  = false;
   var escape = false;
   for (var i = start; i < text.length; i++) {
     var c = text[i];
-    if (escape) { escape = false; continue; }
-    if (c === '\\' && inStr) { escape = true; continue; }
-    if (c === '"') { inStr = !inStr; continue; }
-    if (inStr) continue;
+    if (escape)              { escape = false; continue; }
+    if (c === '\\' && inStr) { escape = true;  continue; }
+    if (c === '"')           { inStr = !inStr;  continue; }
+    if (inStr)               continue;
     if (c === open)  depth++;
     if (c === close) { depth--; if (depth === 0) return text.slice(start, i + 1); }
   }
@@ -884,25 +1054,24 @@ function renderResult(cardId, record) {
   var el = document.getElementById(cardId);
   if (!el) return;
 
-  var task    = record.task;
-  var parsed  = record.parsed;
-  var status  = record.status;
-  var time    = record.time;
-  var rawText = record.rawText;
+  var task      = record.task;
+  var parsed    = record.parsed;
+  var status    = record.status;
+  var time      = record.time;
+  var rawText   = record.rawText;
 
-  var isError   = status === 'error' || status === 'timeout';
-  var isTimeout = status === 'timeout';
-  var isPlain   = parsed && parsed.__isPlainText;
+  var isError    = status === 'error' || status === 'timeout';
+  var isTimeout  = status === 'timeout';
+  var isPlain    = parsed && parsed.__isPlainText;
   var isParseErr = parsed && parsed.__parseError;
 
-  // Use server-returned modelo label if available (e.g. "Gemini (ALT)", "Claude & Tavily")
-  var modelLabel = (parsed && !isPlain && !isParseErr && !isError && parsed.modelo)
-    ? parsed.modelo
-    : task.model;
+  // Always use our canonical display name — do NOT rely on server-returned
+  // parsed.modelo (e.g. "Claude & Tavily", "Perplexity") for the badge text.
+  var modelLabel = getDisplayName(task.model);
 
   var timeLabel = time > 0 ? time + 's' : '';
 
-  // Badge — base class by model key, label from server response when available
+  // Badge — CSS class keyed by task.model (raw key) for styling; text is display name
   var badgeHtml =
     '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border model-badge-' + esc(task.model) + '">' +
     esc(modelLabel) + '</span>';
@@ -919,39 +1088,62 @@ function renderResult(cardId, record) {
     statusChip = '<span class="text-[10px] bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full">json</span>';
   }
 
-  // Copy button + content
-  var copyBtnId = 'copy-' + cardId;
+  // Content for copy button
+  var copyBtnId     = 'copy-' + cardId;
   var contentToCopy = isPlain ? (parsed.text || rawText) : JSON.stringify(parsed, null, 2);
   if (!contentToCopy) contentToCopy = rawText || '';
 
+  // Build content block
   var preHtml = '';
   if (isPlain || isParseErr) {
-    // Plain text display
-    var displayText = isPlain ? (parsed.text || '') : ((parsed && parsed.error) ? parsed.error : rawText);
-    preHtml = '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300 whitespace-pre-wrap break-words">' + esc(displayText) + '</pre>';
+    var displayText = isPlain
+      ? (parsed.text || '')
+      : ((parsed && parsed.error) ? parsed.error : rawText);
+
+    // Plain-text UX label — only when model returned unstructured text (not JSON, not error)
+    var plainLabel = isPlain
+      ? '<p class="text-[10px] text-yellow-400/70 mb-1.5 font-medium">Model returned non-structured text response</p>'
+      : '';
+
+    preHtml =
+      plainLabel +
+      '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300 whitespace-pre-wrap break-words">' +
+      esc(displayText) +
+      '</pre>';
   } else {
-    // JSON display — sanitize internal flags before rendering
+    // JSON display — clone and strip internal sentinel flags before rendering
     var displayObj = parsed;
     if (displayObj) {
-      displayObj = JSON.parse(JSON.stringify(displayObj)); // clone
-      delete displayObj.__isPlainText;
-      delete displayObj.__parseError;
+      try {
+        displayObj = JSON.parse(JSON.stringify(displayObj));
+        delete displayObj.__isPlainText;
+        delete displayObj.__parseError;
+      } catch (_) {}
     }
     var jsonStr = JSON.stringify(displayObj, null, 2);
-    preHtml = '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>' + syntaxHighlight(jsonStr) + '</code></pre>';
+    preHtml =
+      '<pre class="text-[11px] font-mono bg-black/50 p-4 rounded-xl max-h-52 overflow-y-auto custom-scrollbar border border-white/5 text-gray-300"><code>' +
+      syntaxHighlight(jsonStr) +
+      '</code></pre>';
 
-    // If Gemini returned { error: "...", raw: "..." }, append the raw text in a collapsible block
-    if (parsed && parsed.error && parsed.raw) {
+    // Gemini error path: { error: "No se encontró un JSON válido", raw: "<model text>" }
+    // Surface the raw model output in a collapsible block
+    if (parsed && parsed.error && typeof parsed.raw === 'string' && parsed.raw.length > 0) {
       preHtml +=
         '<details class="mt-2">' +
-          '<summary class="text-[10px] text-gray-500 cursor-pointer select-none hover:text-gray-300 transition-colors">▸ raw model output (' + parsed.raw.length + ' chars)</summary>' +
-          '<pre class="text-[10px] font-mono bg-black/50 p-3 rounded-xl max-h-40 overflow-y-auto custom-scrollbar border border-white/5 text-gray-400 whitespace-pre-wrap break-words mt-1">' + esc(parsed.raw) + '</pre>' +
+          '<summary class="text-[10px] text-gray-500 cursor-pointer select-none hover:text-gray-300 transition-colors">' +
+            '▸ raw model output (' + parsed.raw.length + ' chars)' +
+          '</summary>' +
+          '<pre class="text-[10px] font-mono bg-black/50 p-3 rounded-xl max-h-40 overflow-y-auto custom-scrollbar border border-white/5 text-gray-400 whitespace-pre-wrap break-words mt-1">' +
+          esc(parsed.raw) +
+          '</pre>' +
         '</details>';
     }
-    // If error has 'missing' fields (validation error from Lambda), list them
+
+    // Lambda validation error: { error: "Faltan parámetros", missing: ["fecha", ...] }
     if (parsed && parsed.error && Array.isArray(parsed.missing) && parsed.missing.length > 0) {
       preHtml +=
-        '<p class="text-[10px] text-red-400/80 mt-1">Missing fields: ' + esc(parsed.missing.join(', ')) + '</p>';
+        '<p class="text-[10px] text-red-400/80 mt-1 font-mono">Missing fields: ' + esc(parsed.missing.join(', ')) + '</p>';
     }
   }
 
@@ -962,7 +1154,10 @@ function renderResult(cardId, record) {
         (timeLabel ? '<span class="text-[10px] font-mono ' + latencyColor(time) + '">' + esc(timeLabel) + '</span>' : '') +
       '</div>' +
       '<button id="' + copyBtnId + '" class="p-1.5 hover:bg-white/5 rounded-lg transition-all tooltip" data-tip="Copy output">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500">' +
+          '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>' +
+          '<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>' +
+        '</svg>' +
       '</button>' +
     '</div>' +
     preHtml;
@@ -970,7 +1165,7 @@ function renderResult(cardId, record) {
   el.innerHTML = html;
   if (isError || isTimeout) el.classList.add('opacity-80');
 
-  // Attach copy handler via property (no inline JSON in HTML)
+  // Attach copy handler via element property — no inline JSON in HTML attributes
   var copyBtn = document.getElementById(copyBtnId);
   if (copyBtn) {
     copyBtn._copyText = contentToCopy;
@@ -978,14 +1173,13 @@ function renderResult(cardId, record) {
   }
 }
 
-/* ─────────────────── Latency color ─────────────────── */
+/* ─────────────────── Latency helpers ─────────────────── */
 function latencyColor(t) {
   if (t <= 10) return 'text-green-400/80';
   if (t <= 20) return 'text-yellow-400/80';
   return 'text-red-400/80';
 }
 
-/* ─────────────────── Latency chart ─────────────────── */
 function renderLatencyChart() {
   if (latencyData.length === 0) return;
   var max = Math.max.apply(null, latencyData.map(function (d) { return d.time; }));
@@ -999,7 +1193,7 @@ function renderLatencyChart() {
     bar.innerHTML =
       '<span class="text-[9px] font-mono" style="color:' + color + '">' + d.time + 's</span>' +
       '<div style="height:' + pct + '%;min-height:3px;width:18px;background:' + color + ';border-radius:3px 3px 0 0;opacity:0.8"></div>' +
-      '<span class="text-[8px] text-gray-600 text-center leading-tight" style="max-width:44px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(d.model) + '</span>';
+      '<span class="text-[8px] text-gray-600 text-center leading-tight" style="max-width:44px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(getDisplayName(d.model)) + '</span>';
     latencyChart.appendChild(bar);
   });
 }
@@ -1012,12 +1206,12 @@ function exportCSV() {
   var rows = [headers];
 
   resultStore.forEach(function (r) {
-    var d  = r.parsed;
-    var isPlain = d && d.__isPlainText;
-    var hasJson = !isPlain && !(d && d.__parseError) && r.status !== 'error' && r.status !== 'timeout';
-    var currency = (hasJson && d && d.moneda) ? d.moneda : '';
-    var noticiasCt = (hasJson && d && d.noticias) ? d.noticias.length : '';
-    var errMsg = '';
+    var d        = r.parsed;
+    var isPlain  = d && d.__isPlainText;
+    var hasJson  = !isPlain && !(d && d.__parseError) && r.status !== 'error' && r.status !== 'timeout';
+    var currency   = (hasJson && d && d.moneda)   ? d.moneda          : '';
+    var noticiasCt = (hasJson && d && Array.isArray(d.noticias)) ? d.noticias.length : '';
+    var errMsg   = '';
     if (r.status === 'error' || r.status === 'timeout') {
       errMsg = (d && d.error) ? d.error : '';
     }
@@ -1040,7 +1234,7 @@ function exportCSV() {
   var blob = new Blob([csv], { type: 'text/csv' });
   var url  = URL.createObjectURL(blob);
   var a    = document.createElement('a');
-  a.href   = url;
+  a.href     = url;
   a.download = 'price-intelligence-' + new Date().toISOString().split('T')[0] + '.csv';
   document.body.appendChild(a);
   a.click();
@@ -1055,7 +1249,7 @@ function csvCell(v) {
 
 /* ─────────────────── localStorage ─────────────────── */
 function saveToLocalStorage(state) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (_) {}
 }
 
 function restoreFromLocalStorage() {
@@ -1063,41 +1257,47 @@ function restoreFromLocalStorage() {
     var saved = localStorage.getItem(LS_KEY);
     if (!saved) return;
     var s = JSON.parse(saved);
-    if (s.date)   dateInput.value = s.date;
 
-    // Restore models (new format: array; old format: single string under "model")
+    if (s.date) dateInput.value = s.date;
+
+    // Support both new format (models: [...]) and old format (model: "string")
     var modelArr = s.models || (s.model ? [s.model] : []);
     modelArr.forEach(function (v) {
+      // querySelector is safe: v comes from our own model keys (no special chars)
       var cb = document.querySelector('input[name="model"][value="' + v + '"]');
       if (cb) cb.checked = true;
+      // Unknown model keys (removed from MODELS) are silently skipped
     });
 
     if (s.countries) {
       s.countries.forEach(function (c) {
         var cb = document.querySelector('input[name="country"][value="' + c + '"]');
-        if (cb) cb.checked = true;
-        else {
+        if (cb) {
+          cb.checked = true;
+        } else {
           var el = document.getElementById('custom-country');
           el.value = el.value ? el.value + ', ' + c : c;
         }
       });
     }
+
     if (s.platforms) {
       s.platforms.forEach(function (p) {
         var cb = document.querySelector('input[name="platform"][value="' + p + '"]');
-        if (cb) cb.checked = true;
-        else {
+        if (cb) {
+          cb.checked = true;
+        } else {
           var el = document.getElementById('custom-platform');
           el.value = el.value ? el.value + ', ' + p : p;
         }
       });
     }
-  } catch (e) {}
+  } catch (_) {}
 }
 
 /* ─────────────────── UI state helpers ─────────────────── */
 function setRunning(running) {
-  runBtn.disabled  = running;
+  runBtn.disabled   = running;
   shareBtn.disabled = running;
   if (running) {
     runBtnText.textContent = 'Processing…';
@@ -1110,7 +1310,7 @@ function setRunning(running) {
       icon.outerHTML =
         '<svg id="run-btn-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
     }
-    updateSummary(); // re-evaluate disabled
+    updateSummary(); // re-evaluate disabled state
   }
 }
 
@@ -1144,7 +1344,9 @@ function showToast(msg) {
 function copyToClipboard(btn, text) {
   navigator.clipboard.writeText(text).then(function () {
     var orig = btn.innerHTML;
-    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    btn.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">' +
+      '<polyline points="20 6 9 17 4 12"/></svg>';
     setTimeout(function () { btn.innerHTML = orig; }, 2000);
   }).catch(function () { showToast('Clipboard write failed'); });
 }
