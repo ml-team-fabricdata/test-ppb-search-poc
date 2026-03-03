@@ -908,7 +908,7 @@ function renderModelPlaceholderHTML(cardId, task) {
   (success, error, or timeout). Never rejects — all errors are
   caught and surfaced in the result card.
 */
-async function processTask(task) {
+async function processTask(task, runId) {
   var cardId    = makeCardId(task);
   var startTime = performance.now();
   var status    = 'ok';
@@ -977,23 +977,31 @@ async function processTask(task) {
   }
 
   var duration = ((performance.now() - startTime) / 1000).toFixed(2);
-  completedJobs++;
-  jobCounter.textContent = completedJobs + ' / ' + totalJobs;
-
-  var record = {
+  var record   = {
     task:    task,
     parsed:  parsed,
     rawText: rawText,
     status:  status,
     time:    parseFloat(duration)
   };
-  resultStore.push(record);
-  // Use display name in the latency tooltip label
-  latencyData.push({ label: getDisplayName(task.model) + ' / ' + task.platform + ' / ' + task.country, time: parseFloat(duration), model: task.model });
 
-  // Wrap renderResult so an unexpected DOM exception does not propagate
-  // and reject processTask, which would stall runWithConcurrency.
-  try { renderResult(cardId, record); } catch (_) {}
+  // Guard post-processing block: stale-run check, DOM refs, and array mutations
+  // must NEVER cause processTask to reject — that would stall runWithConcurrency.
+  try {
+    // Discard result if a newer scan has already started (defensive; normally
+    // cannot happen because the run button is disabled during the scan).
+    if (runId !== undefined && runId !== activeRunId) return;
+
+    completedJobs++;
+    jobCounter.textContent = completedJobs + ' / ' + totalJobs;
+    resultStore.push(record);
+    latencyData.push({ label: getDisplayName(task.model) + ' / ' + task.platform + ' / ' + task.country, time: parseFloat(duration), model: task.model });
+    try { renderResult(cardId, record); } catch (_) {}
+  } catch (_) {
+    // If DOM mutation fails (jobCounter removed, etc.), still push to resultStore
+    // so CSV export and the analytical table remain consistent.
+    try { if (resultStore.indexOf(record) === -1) resultStore.push(record); } catch (_) {}
+  }
 }
 
 /* ─────────────────── safeParseResponse ─────────────────── */
@@ -1365,6 +1373,7 @@ function clearResults() {
   latencyChart.innerHTML     = '';
   resultStore  = [];
   latencyData  = [];
+  resetAnalyticalTable();
   resultsWrapper.classList.add('hidden');
   chartWrapper.classList.add('hidden');
   exportBtn.classList.add('hidden');
@@ -1373,6 +1382,192 @@ function clearResults() {
 
 function setDefaultDate() {
   dateInput.value = new Date().toISOString().split('T')[0];
+}
+
+/* ─────────────────── Analytical table ─────────────────── */
+
+/*
+  Toggle the table body visibility when user clicks [Show/Hide Analytical Table].
+  The outer section (#analytics-section) is shown by renderAnalyticalTable;
+  this function only toggles the inner wrapper (#analytics-table-wrapper).
+*/
+function toggleAnalyticalTable() {
+  var hidden = analyticsWrapper.classList.contains('hidden');
+  if (hidden) {
+    analyticsWrapper.classList.remove('hidden');
+    toggleAnalyticsBtn.textContent = '[ Hide Analytical Table ]';
+  } else {
+    analyticsWrapper.classList.add('hidden');
+    toggleAnalyticsBtn.textContent = '[ Show Analytical Table ]';
+  }
+}
+
+/*
+  Reset analytical table to its initial state.
+  Called at the start of each new scan and by clearResults.
+*/
+function resetAnalyticalTable() {
+  analyticsSection.classList.add('hidden');
+  analyticsWrapper.classList.add('hidden');
+  analyticsContainer.innerHTML = '';
+  toggleAnalyticsBtn.textContent = '[ Show Analytical Table ]';
+}
+
+/*
+  Build the full normalized analytical table from resultStore.
+  One row per noticia entry; error/timeout/plain-text/no-data → single row
+  with error_message populated.
+
+  Columns: modelo, pais, plataforma, moneda, noticia_url, noticia_title,
+           noticia_paises_afectados, noticia_categoria, noticia_fecha,
+           noticia_resumen, noticia_planes, tiempo, error_message.
+
+  Called once after the full scan completes (resultStore is the source of truth).
+  Safe to call multiple times: container is cleared before rebuild.
+  Table starts collapsed — user must click toggle to expand it.
+*/
+function renderAnalyticalTable() {
+  if (resultStore.length === 0) return;
+
+  var COLS = [
+    'modelo', 'pais', 'plataforma', 'moneda',
+    'noticia_url', 'noticia_title', 'noticia_paises_afectados',
+    'noticia_categoria', 'noticia_fecha', 'noticia_resumen',
+    'noticia_planes', 'tiempo', 'error_message'
+  ];
+
+  /* ── Normalize resultStore → flat rows ── */
+  var rows = [];
+
+  resultStore.forEach(function (r) {
+    var task    = r.task;
+    var parsed  = r.parsed;
+    var status  = r.status;
+    var isError = status === 'error' || status === 'timeout';
+    var isPlain = !!(parsed && parsed.__isPlainText);
+    var moneda  = '';
+    if (!isError && !isPlain && parsed && parsed.moneda) {
+      moneda = String(parsed.moneda);
+    }
+
+    var hasNoticias = (
+      !isError && !isPlain &&
+      parsed &&
+      Array.isArray(parsed.noticias) &&
+      parsed.noticias.length > 0
+    );
+
+    if (hasNoticias) {
+      parsed.noticias.forEach(function (n) {
+        var planes = '';
+        try { planes = n.noticia_planes ? JSON.stringify(n.noticia_planes) : ''; } catch (_) {}
+        var paises = '';
+        try { paises = n.noticia_paises_afectados ? JSON.stringify(n.noticia_paises_afectados) : ''; } catch (_) {}
+
+        rows.push({
+          modelo:                   getDisplayName(task.model),
+          pais:                     task.country,
+          plataforma:               task.platform,
+          moneda:                   moneda,
+          noticia_url:              n.noticia_url              || '',
+          noticia_title:            n.noticia_title            || '',
+          noticia_paises_afectados: paises,
+          noticia_categoria:        n.noticia_categoria        || '',
+          noticia_fecha:            n.noticia_fecha            || '',
+          noticia_resumen:          n.noticia_resumen          || '',
+          noticia_planes:           planes,
+          tiempo:                   r.time,
+          error_message:            ''
+        });
+      });
+    } else {
+      var errMsg = '';
+      if (isError) {
+        errMsg = (parsed && parsed.error)
+          ? String(parsed.error)
+          : (status === 'timeout' ? 'Timeout' : 'Error');
+      } else if (isPlain) {
+        errMsg = 'Plain text response';
+      } else if (parsed && parsed.__parseError) {
+        errMsg = parsed.error ? String(parsed.error) : 'Parse error';
+      } else {
+        errMsg = 'No noticias data returned';
+      }
+      rows.push({
+        modelo:                   getDisplayName(task.model),
+        pais:                     task.country,
+        plataforma:               task.platform,
+        moneda:                   moneda,
+        noticia_url:              '',
+        noticia_title:            '',
+        noticia_paises_afectados: '',
+        noticia_categoria:        '',
+        noticia_fecha:            '',
+        noticia_resumen:          '',
+        noticia_planes:           '',
+        tiempo:                   r.time,
+        error_message:            errMsg
+      });
+    }
+  });
+
+  /* ── Build HTML ── */
+  var thCls = 'px-3 py-2 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap';
+  var theadHtml =
+    '<tr class="border-b border-white/10">' +
+    COLS.map(function (c) { return '<th class="' + thCls + '">' + c + '</th>'; }).join('') +
+    '</tr>';
+
+  var tbodyHtml = rows.map(function (row, idx) {
+    var trCls = 'border-b border-white/[0.04] hover:bg-white/[0.02]' + (idx % 2 ? ' bg-white/[0.01]' : '');
+    var cells = COLS.map(function (col) {
+      var val = (row[col] !== null && row[col] !== undefined) ? String(row[col]) : '';
+      var tdBase = 'px-3 py-1.5 align-top';
+
+      if (col === 'noticia_url' && val) {
+        var short = val.length > 40 ? val.slice(0, 40) + '…' : val;
+        return '<td class="' + tdBase + ' text-gray-400 max-w-[180px] overflow-hidden whitespace-nowrap">' +
+          '<a href="' + esc(val) + '" target="_blank" rel="noopener noreferrer" ' +
+          'class="text-blue-400 hover:text-blue-300 hover:underline" title="' + esc(val) + '">' +
+          esc(short) + '</a></td>';
+      }
+      if (col === 'error_message' && val) {
+        var shortErr = val.length > 80 ? val.slice(0, 80) + '…' : val;
+        return '<td class="' + tdBase + ' text-red-400/80 max-w-[240px] overflow-hidden whitespace-nowrap" title="' + esc(val) + '">' +
+          esc(shortErr) + '</td>';
+      }
+      if (col === 'noticia_resumen' && val) {
+        var shortRes = val.length > 120 ? val.slice(0, 120) + '…' : val;
+        return '<td class="' + tdBase + ' text-gray-400 max-w-[280px] overflow-hidden whitespace-normal" title="' + esc(val) + '">' +
+          esc(shortRes) + '</td>';
+      }
+      if (col === 'modelo') {
+        return '<td class="' + tdBase + ' font-medium text-white whitespace-nowrap">' + esc(val) + '</td>';
+      }
+      if (col === 'tiempo') {
+        return '<td class="' + tdBase + ' font-mono ' + latencyColor(parseFloat(val)) + ' whitespace-nowrap">' + esc(val) + 's</td>';
+      }
+      var shortVal = val.length > 60 ? val.slice(0, 60) + '…' : val;
+      return '<td class="' + tdBase + ' text-gray-400 whitespace-nowrap max-w-[200px] overflow-hidden" title="' + esc(val) + '">' +
+        esc(shortVal) + '</td>';
+    }).join('');
+
+    return '<tr class="' + trCls + '">' + cells + '</tr>';
+  }).join('');
+
+  analyticsContainer.innerHTML =
+    '<table style="border-collapse:collapse;width:100%" class="text-[11px]">' +
+      '<thead>' + theadHtml + '</thead>' +
+      '<tbody>' + tbodyHtml + '</tbody>' +
+    '</table>' +
+    '<p class="text-[10px] text-gray-600 mt-2 px-1">' +
+      rows.length + ' row' + (rows.length === 1 ? '' : 's') +
+    '</p>';
+
+  // Reveal the section; table body stays collapsed until user clicks toggle
+  analyticsSection.classList.remove('hidden');
+  analyticsWrapper.classList.add('hidden');
+  toggleAnalyticsBtn.textContent = '[ Show Analytical Table ]';
 }
 
 /* ─────────────────── Toast ─────────────────── */
